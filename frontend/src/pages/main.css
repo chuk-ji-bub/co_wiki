@@ -1,0 +1,28 @@
+.main-page {
+    display: flex;
+  
+    }
+.sidebar {
+z-index: 3;
+}
+    
+.main-content {
+z-index: 3;
+}
+
+.user-info {
+z-index: 3;
+}
+    
+.game-stats {
+z-index: 3; 
+}
+    
+.chess-board {
+z-index: 3;   
+}
+    
+.game-controls {
+z-index: 3;    
+}  
+  
