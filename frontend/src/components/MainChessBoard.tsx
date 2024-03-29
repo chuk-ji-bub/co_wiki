@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Chessboard from 'chessboardjsx';
-import { Chess } from 'chess.js'; // 수정된 import 문
+import { Chess } from 'chess.js'; 
 import { useNavigate } from 'react-router-dom';
 
 const MainChessBoard: React.FC = () => {
@@ -11,7 +11,7 @@ const MainChessBoard: React.FC = () => {
     const result = game.move(move);
 
     if (result) {
-      // 유효한 이동인 경우, 게임 상태를 업데이트합니다.
+      // 유효이동시 게임 상태 업데이트
       setGame(new Chess(game.fen()));
 
       // 특정 이동에 따른 조건 검사

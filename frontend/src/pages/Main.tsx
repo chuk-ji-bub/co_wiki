@@ -6,8 +6,8 @@ import MainChessBoard from '../components/MainChessBoard'; // MainChessBoard 컴
 const Main: React.FC = () => {
     return (
         <div style={{ textAlign: 'center', marginTop: '50px' }}>
-            <h1>Welcome to Our Chess Game!</h1>
-            <p>체스 게임을 즐겨보세요. 당신의 전략적 사고를 테스트하고 친구들과 함께 플레이해 보세요.</p>
+            <h1>Piece of Cake</h1>
+            <p>체스 즐겜</p>
             {/* MainChessBoard 컴포넌트를 렌더링합니다. */}
             <MainChessBoard />
             <div>
