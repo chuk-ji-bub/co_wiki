@@ -1,9 +1,4 @@
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
-// 메인페이지에 선택하면 나올 텍스트박스
-=======
->>>>>>> Stashed changes
+
 // 메인페이지에 선택하면 나올 텍스트박스
 
 // MiddleBox.tsx
@@ -19,9 +14,5 @@ const Middle: React.FC = () => {
   );
 };
 
-<<<<<<< Updated upstream
 export default Middle;
-=======
-export default Middle;
->>>>>>> 1314cef95ef5391b08309ecdd5132f18a0c3017f
->>>>>>> Stashed changes
+
