@@ -2,14 +2,14 @@
 
 import React from 'react';
 
-const Middle: React.FC = () => {
+const left: React.FC = () => {
   return (
-    <div className="middle-box">
+    <div className="left-box">
       {/* 여기에 내용을 추가하세요 */}
       <p>JavaScript 내용을 여기에 추가하세요</p>
     </div>
   );
 };
 
-export default Middle;
+export default left;
 
