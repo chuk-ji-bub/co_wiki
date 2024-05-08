@@ -1,3 +1,5 @@
+//main 페이지
+
 import React, { useRef } from 'react';
 import './style.css';
 import Header from '../../components/Header/Header';
@@ -8,13 +10,9 @@ import Header from '../../components/Header/Header';
 const Main: React.FC = () => {
 
 
-
-  
   return (
-    <div className="main-container">
-      
+    <div className="Header">
       <Header /> 
-      
     </div>
   );
 };
