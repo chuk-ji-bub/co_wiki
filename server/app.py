@@ -1,13 +1,35 @@
 from flask import *
 from flask_cors import CORS
+from base64 import b64encode
 import pymysql
+
+
 
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
-
-# MySQL 연결 설정
 db = pymysql.connect(host='127.0.0.1', user='root', password='1234', db='co_wiki', charset='utf8')
+# 데이터에 접근
 cursor = db.cursor()
+
+def data():
+    # SQL query 작성
+    sql = "select * from test"
+
+    # SQL query 실행
+    cursor.execute(sql)
+
+    # db 데이터 가져오기
+    print(cursor.fetchall()) #모든 행 가져오기
+    #cursor.fetchone() # 하나의 행만 가져오기
+    #cursor.fetchmany(n) # n개의 데이터 가져오기 
+
+    # 수정 사항 db에 저장
+    db.commit()
+    
+    # Database 닫기
+    db.close()
+
+    return
 
 @app.route('/')
 def hello():
@@ -36,39 +58,42 @@ def get_name():
     except Exception as e:
         return jsonify({'error': str(e)})
 
+
 @app.route('/api/create/', methods=['POST'])
 def create():
+    # 폼 데이터 가져오기
     id = request.form.get('id')
     password = request.form.get('password')
     confirm_password = request.form.get('confirm_password')
     name = request.form.get('name')
+    print(id, password, name)
 
-    # 중복된 id가 있는지 확인
-    sql_check_id = "SELECT id FROM login WHERE id = %s"
-    cursor.execute(sql_check_id, (id,))
-    existing_id = cursor.fetchone()
+    if password != confirm_password:
+        return "<a href='http://localhost:3000'>비밀번호가 일치하지 않습니다</a>"
+    else :
 
-    if existing_id:
-        return redirect("http://localhost:3000/signup?error=ID already exists")
-    else:
-        # 비밀번호 확인 및 데이터 삽입
-        if password != confirm_password:
-            return "<a href='http://localhost:3000'>Passwords do not match</a>"
-        else:
-            sql_insert = "INSERT INTO login (id, password, name) VALUES (%s, %s, %s)"
-            val = (id, password, name)
-            cursor.execute(sql_insert, val)
-            db.commit()
-            return redirect("http://localhost:3000/login")
+        # MySQL 쿼리 실행
+        # cursor = db.cursor()  # 이 부분을 주석 처리 또는 제거
+        sql = "INSERT INTO login (id, password, name) VALUES (%s, %s, %s)"
+        val = (id, password, name)
+        cursor.execute(sql, val)
+        db.commit()
+        # cursor.close()  # 이 부분을 주석 처리 또는 제거
+
+        return redirect("http://localhost:3000/login")
 
 @app.route('/api/check_username/<username>', methods=['GET'])
 def check_username(username):
+    # 데이터베이스에서 입력받은 아이디가 이미 사용 중인지 확인
     sql = "SELECT id FROM login WHERE id = %s"
     cursor.execute(sql, (username,))
     result = cursor.fetchone()
 
+    # 결과를 JSON 형태로 반환
     is_taken = result is not None
     return jsonify({'isTaken': is_taken})
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

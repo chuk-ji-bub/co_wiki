@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 import { UserProvider } from './components/UserContext/UserContext';
 import Main from '../src/pages/main/index';
 import Login from './pages/login/index';
@@ -11,8 +10,10 @@ import Mainhyun from './pages/mainhyun';
 
 const App: React.FC = () => {
   
+  const storedUserName = localStorage.getItem('userName');
+
   return (
-    <UserProvider initialUserName={null}>
+    <UserProvider initialUserName={storedUserName}>
       <Router>
         <Routes>
 
