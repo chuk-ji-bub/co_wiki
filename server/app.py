@@ -16,12 +16,14 @@ def hello():
 @app.route('/api/get_name', methods=['POST'])
 def get_name():
     try:
+        # 클라이언트에서 JSON 형식으로 전송한 데이터를 추출
         data = request.get_json()
-        username = data.get('username')  # 'email' -> 'username'로 수정
+        id = data.get('id')
         password = data.get('password')
 
-        sql = "SELECT name from login WHERE id = %s AND password = %s"
-        cursor.execute(sql, (username, password))
+        # 사용자를 찾는 쿼리 실행
+        sql = "SELECT name FROM login WHERE email = %s AND password = %s"
+        cursor.execute(sql, (id, password))
         result = cursor.fetchone()
 
         if result:
@@ -33,8 +35,6 @@ def get_name():
 
     except Exception as e:
         return jsonify({'error': str(e)})
-
-
 
 @app.route('/api/create/', methods=['POST'])
 def create():
@@ -60,7 +60,6 @@ def create():
             cursor.execute(sql_insert, val)
             db.commit()
             return redirect("http://localhost:3000/login")
-
 
 @app.route('/api/check_username/<username>', methods=['GET'])
 def check_username(username):

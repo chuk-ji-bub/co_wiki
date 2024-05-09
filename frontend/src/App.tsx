@@ -7,7 +7,7 @@ import Login from './pages/login/index';
 import Signup from './pages/signup/index';
 
 import Mainhyun from './pages/mainhyun';
-//import Main from './pages/main';
+
 
 const App: React.FC = () => {
   
