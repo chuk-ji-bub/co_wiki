@@ -1,22 +1,44 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Main from './pages/main';
-import Mainhyun from './pages/mainhyun';
-import Maininsung from './pages/maininsung';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { UserProvider, useUser } from './components/UserContext/UserContext';
+import { Navigate } from 'react-router-dom';
 
-const App: React.FC = () => {
+import Main from '../src/pages/main/index';
+import Login from './pages/login/index';
+import Signup from './pages/signup/index';
+import Userpage from './pages/userpage/index';
+import Mainhyun from './pages/mainhyun';
+
+
+function App() {
+  
+  const storedUserName = localStorage.getItem('userName');
+
   return (
-    <Router>
-      <div>
-        {/* 여기에 네비게이션 바나 공통 레이아웃 컴포넌트를 추가할 수 있습니다 */}
+    <UserProvider initialUserName={storedUserName}>
+      <Router>
         <Routes>
+
           <Route path="/" element={<Main />} />
           <Route path="/1" element={<Mainhyun/>} />
-          <Route path="/2" element={<Maininsung />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+
+          <Route path="/userpage" element={<UserpageRoute />} />
         </Routes>
-      </div>
-    </Router>
+      </Router>
+    </UserProvider>
   );
 };
+
+function UserpageRoute() {
+  const { userName } = useUser();
+
+  if (userName) {
+    return <Userpage />;
+  } else {
+    return <Navigate to="/login" replace />;
+  }
+}
 
 export default App;

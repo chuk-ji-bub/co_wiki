@@ -1,8 +1,9 @@
+//Header.tsx
+
 import React from 'react';
 import { Link } from 'react-router-dom';
-import styles from './style.module.css'; // styles로 스타일을 가져옵니다.
+import styles from './style.module.css'; 
 import { useUser } from '../UserContext/UserContext';
-
 
 const Header = () => {
   const { userName, logout } = useUser();
