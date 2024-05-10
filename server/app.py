@@ -38,7 +38,7 @@ def hello():
 def get_name():
     try:
         # 클라이언트에서 JSON 형식으로 전송한 데이터를 추출
-        data = request.get_json()
+        data = request.get_json()   
         id = data.get('email')
         password = data.get('password')
 
@@ -56,6 +56,7 @@ def get_name():
 
     except Exception as e:
         return jsonify({'error': str(e)})
+
 
 
 @app.route('/api/create/', methods=['POST'])

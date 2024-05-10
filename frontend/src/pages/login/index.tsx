@@ -19,7 +19,7 @@ function Login() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password }), // 수정된 부분
       });
   
       if (response.ok) {
@@ -51,7 +51,7 @@ function Login() {
           <form className="login-form" onSubmit={handleSubmit}>
             <input
               type="text"
-              placeholder="ID"
+              placeholder="Email" // 수정된 부분
               className="login-input"
               value={email}
               onChange={(e) => setEmail(e.target.value)}

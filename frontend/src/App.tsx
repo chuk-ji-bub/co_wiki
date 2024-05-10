@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { UserProvider, useUser } from './components/UserContext/UserContext';
 import { Navigate } from 'react-router-dom';
+
 import Main from '../src/pages/main/index';
 import Login from './pages/login/index';
 import Signup from './pages/signup/index';
