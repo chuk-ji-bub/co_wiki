@@ -43,7 +43,7 @@ def get_name():
         password = data.get('password')
 
         # 사용자를 찾는 쿼리 실행
-        sql = "SELECT name from login WHERE id = %s AND password = %s"
+        sql = "SELECT name FROM login WHERE id = %s AND password = %s"
         cursor.execute(sql, (id, password))
         result = cursor.fetchone()
 
