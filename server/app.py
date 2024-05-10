@@ -14,7 +14,6 @@ def data():
     # SQL query 작성
     sql = "select * from test"
 
-    
 
     # SQL query 실행
     cursor.execute(sql)
@@ -58,6 +57,7 @@ def get_name():
 
     except Exception as e:
         return jsonify({'error': str(e)})
+
 
 
 
