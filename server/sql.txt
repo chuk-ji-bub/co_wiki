@@ -1,7 +1,0 @@
-USE co_wiki;
-
-CREATE TABLE login (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    password VARCHAR(255) NOT NULL,
-    name VARCHAR(255) NOT NULL
-);
