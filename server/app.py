@@ -49,7 +49,6 @@ def get_name():
 
         if result:
             name = result[0]
-            print(name)
         else:
             name = None
 
