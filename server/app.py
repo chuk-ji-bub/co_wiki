@@ -39,16 +39,17 @@ def get_name():
     try:
         # 클라이언트에서 JSON 형식으로 전송한 데이터를 추출
         data = request.get_json()
-        id = data.get('id')
+        id = data.get('email')
         password = data.get('password')
 
         # 사용자를 찾는 쿼리 실행
-        sql = "SELECT name FROM login WHERE email = %s AND password = %s"
+        sql = "SELECT name from login WHERE id = %s AND password = %s"
         cursor.execute(sql, (id, password))
         result = cursor.fetchone()
 
         if result:
             name = result[0]
+            print(name)
         else:
             name = None
 
