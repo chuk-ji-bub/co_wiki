@@ -62,7 +62,7 @@ def create():
         cursor.close()
         db.close()
 
-        return jsonify({'message': '회원가입 되셨습니다.'})
+        return jsonify({'message': '회원가입 되셨습니다.', 'redirect': '/login'})
 
     except Exception as e:
         return jsonify({'error': str(e)})
