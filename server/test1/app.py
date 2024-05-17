@@ -16,17 +16,21 @@ def hello():
 @app.route('/api/get_name', methods=['POST'])
 def get_name():
     try:
-        data = request.get_json()
+        # 클라이언트에서 JSON 형식으로 전송한 데이터를 추출
+        data = request.get_json()   
         id = data.get('email')
         password = data.get('password')
 
+        # 데이터베이스 연결 및 커서 생성
         db = get_db_connection()
         cursor = db.cursor()
 
+        # 사용자를 찾는 쿼리 실행
         sql = "SELECT name FROM login WHERE id = %s AND password = %s"
         cursor.execute(sql, (id, password))
         result = cursor.fetchone()
 
+        # 커서 및 연결 닫기
         cursor.close()
         db.close()
 
@@ -43,6 +47,7 @@ def get_name():
 @app.route('/api/create/', methods=['POST'])
 def create():
     try:
+        # 클라이언트에서 JSON 형식으로 전송한 데이터를 추출
         data = request.get_json()
         id = data.get('id')
         password = data.get('password')
@@ -52,17 +57,20 @@ def create():
         if password != confirm_password:
             return jsonify({'error': '비밀번호가 일치하지 않습니다'}), 400
 
+        # 데이터베이스 연결 및 커서 생성
         db = get_db_connection()
         cursor = db.cursor()
 
+        # MySQL 쿼리 실행
         sql = "INSERT INTO login (id, password, name) VALUES (%s, %s, %s)"
         cursor.execute(sql, (id, password, name))
         db.commit()
 
+        # 커서 및 연결 닫기
         cursor.close()
         db.close()
 
-        return jsonify({'message': '회원가입 되셨습니다.'})
+        return redirect("http://localhost:3000/login")
 
     except Exception as e:
         return jsonify({'error': str(e)})
@@ -70,16 +78,20 @@ def create():
 @app.route('/api/check_username/<username>', methods=['GET'])
 def check_username(username):
     try:
+        # 데이터베이스 연결 및 커서 생성
         db = get_db_connection()
         cursor = db.cursor()
 
+        # 데이터베이스에서 입력받은 아이디가 이미 사용 중인지 확인
         sql = "SELECT id FROM login WHERE id = %s"
         cursor.execute(sql, (username,))
         result = cursor.fetchone()
 
+        # 커서 및 연결 닫기
         cursor.close()
         db.close()
 
+        # 결과를 JSON 형태로 반환
         is_taken = result is not None
         return jsonify({'isTaken': is_taken})
 

@@ -1,0 +1,80 @@
+/* style.css */
+
+/* 스타일링된 컨테이너 */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f2f2f2;
+  position: relative;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 로그인 폼 스타일 */
+.login-form {
+  width: 600px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin: 0 auto; /* 가로 가운데 정렬 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-button-container {
+  width: 600px;
+  background-color: white;
+  border-radius: 10px;
+  margin: 0 auto; /* 가로 가운데 정렬 */
+  text-align: center; /* 내부 텍스트를 가로 가운데 정렬 */
+}
+
+
+
+/* 로그인 입력 필드 스타일 */
+.login-form input {
+  width: 75%;
+  padding: 10px;
+  margin-top: 20px ;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 20px;
+  font-size: 16px;
+  outline: none;
+  border: 1px solid #ccc;
+}
+
+/* 로그인 버튼 스타일 */
+.login-form button.login-button{
+  background-color: mediumaquamarine;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-top: 15px;
+  margin-bottom: 20px;
+  font-size: 20px;
+  padding: 10px 20px;
+  width: 75%;
+}
+
+.login-form button.signup-button{
+  background-color: mediumaquamarine;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  font-size: 20px;
+  padding: 10px 20px;
+  width: 75%;
+}
+
+.login-form button.signup-button:hover {
+  background-color: black;
+}
