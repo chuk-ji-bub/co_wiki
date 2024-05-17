@@ -4,6 +4,7 @@ import MiddleBox from '../components/middle/middle'; // MiddleBox 컴포넌트�
 //import LeftBox from '../components/left'; // LeftBox 컴포넌트를 불러옵니다.
 //import Main from './main';
 
+
 const App: React.FC = () => {
     return (
       <div className="main-container">
