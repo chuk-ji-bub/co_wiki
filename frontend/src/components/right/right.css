@@ -1,41 +1,41 @@
 /* middle.css */
 
-.editor-container1 {
+.editor-container3 {
     position: absolute; /* 위치 지정 */
     bottom: 0; /* 아래쪽에서부터 시작 */
-    left: 0%; /* 화면의 가운데로 이동 */
-    transform: translateX(-20%); /* 가운데 정렬 */
+    left: 60%; /* 화면의 가운데로 이동 */
+    transform: translateX(-50%); /* 가운데 정렬 */
     display: flex;
     flex-direction: column; /* 세로 방향으로 요소 배치 */
     align-items: flex-start; /* 가로 방향으로 왼쪽 정렬 */
     height: 80vh; /* 화면 전체 높이의 80% */
     width: 50vh; /* 화면 전체 너비의 50% */
-    border: solid blue;
+    border: solid red;
     margin: auto; /* 가로 세로 중앙 정렬 */
-    background-color: blue;
+    background-color: red;
   }
   
-  .text-panel1 {
+  .text-panel3 {
     /* 텍스트 패널 스타일 */
   }
   
-  .text-content1 {
+  .text-content3 {
     /* 텍스트 내용 스타일 */
   }
   
-  .expanded1 {
+  .expanded3 {
     /* 텍스트 내용이 펼쳐졌을 때의 스타일 */
   }
   
-  .expand-button1 {
+  .expand-button3 {
     /* 확장 버튼 스타일 */
   }
   
-  .bookmarks-panel1 {
+  .bookmarks-panel3 {
     /* 북마크 패널 스타일 */
   }
   
-  .save-button1 {
+  .save-button3 {
     /* 저장 버튼 스타일 */
   }
   
