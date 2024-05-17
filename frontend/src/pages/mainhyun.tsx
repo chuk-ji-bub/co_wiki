@@ -1,7 +1,7 @@
 import React from 'react';
 
 import MiddleBox from '../components/middle'; // MiddleBox 컴포넌트를 불러옵니다.
-import LeftBox from '../components/left'; // LeftBox 컴포넌트를 불러옵니다.
+import LeftBox from '../components/left/left'; // LeftBox 컴포넌트를 불러옵니다.
 import Main from './main';
 
 const App: React.FC = () => {

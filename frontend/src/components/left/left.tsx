@@ -1,11 +1,12 @@
 // 메인페이지 왼쪽 선택할거
 
 import React from 'react';
+import './left.css';
 
 const Left: React.FC = () => {
   return (
-    <div className="left-box">
-      <p>JavaScript 내용을 여기에 추가하세요</p>
+    <div className="left">
+      Left Component
     </div>
   );
 };
