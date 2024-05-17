@@ -1,7 +1,7 @@
-// MyEditor.tsx
+// middle.tsx
 
 import React, { useState } from 'react';
-// import './MyEditor.css'; // 스타일링 파일 (CSS 모듈 등을 사용)
+import './middle.css'; // 스타일링 파일 (CSS 모듈 등을 사용)
 
 const MyEditor: React.FC = () => {
   const [expanded, setExpanded] = useState(false);
