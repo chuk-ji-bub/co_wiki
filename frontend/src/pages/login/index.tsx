@@ -12,7 +12,7 @@ function Login() {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5000/api/get_name', {  // URL 수정
+      const response = await fetch('http://localhost:5000/api/get_name', {  
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
