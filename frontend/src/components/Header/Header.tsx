@@ -26,7 +26,7 @@ const Header = () => {
       <div className={styles['black-nav']}>
         <div className={styles.logo}>
           <Link to="/">
-            <img src="./img/sec.png" alt="로고" style={{ width: '100px', height: '45px' }} />
+            <img src="./img/1.webp" alt="로고" style={{ width: '100px', height: '45px' }} />
           </Link>
         </div>
         {userName ? (
