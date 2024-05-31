@@ -116,16 +116,18 @@ def check_username(username):
     except Exception as e:
         return jsonify({'error': str(e)})
     
-
+    
 @app.route('/api/dictionary', methods=['GET'])
 def get_terms():
     db = get_db_connection()
-    cursor = db.cursor()
+    cursor = db.cursor(pymysql.cursors.DictCursor)  # 결과를 딕셔너리 형태로 반환
     cursor.execute("SELECT * FROM dictionary")
     terms = cursor.fetchall()
     cursor.close()
     db.close()
     return jsonify(terms)
+
+
 
 @app.route('/api/dictionary', methods=['POST'])
 def add_term():

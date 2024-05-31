@@ -56,6 +56,7 @@ const Header: React.FC = () => {
                   <Link to="/userpage">Profile</Link>
                   <button onClick={handleLogout}>Logout</button>
                 </div>
+                
               )}
             </div>
           </div>
