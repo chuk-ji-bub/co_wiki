@@ -12,7 +12,6 @@
   width: 50vh; /* 화면 전체 너비의 50% */
   border: solid black;
   margin: auto; /* 가로 세로 중앙 정렬 */
-  background-color: aqua;
 }
 .text-panel2 {
   /* 텍스트 패널 스타일 */
