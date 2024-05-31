@@ -12,6 +12,7 @@ const App: React.FC = () => {
       <div className="main-container">
         {/* MiddleBox와 LeftBox 컴포넌트를 모두 렌더링합니다. */}
         <Header/>
+        <LeftBox/>
         <MiddleBox />
         {/* <LeftBox/>*/}
         <RightBox/>
