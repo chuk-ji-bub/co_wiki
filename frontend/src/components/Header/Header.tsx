@@ -1,24 +1,36 @@
 //Header.tsx
 
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styles from './style.module.css';
 
-const Header = () => {
+const Header: React.FC = () => {
   const [userName, setUserName] = useState<string | null>(null);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // 예시: 로컬 스토리지에서 사용자 이름을 가져옴
     const storedUserName = localStorage.getItem('userName');
+    const storedProfileImage = localStorage.getItem('userProfileImage');
     if (storedUserName) {
       setUserName(storedUserName);
+    }
+    if (storedProfileImage) {
+      setProfileImage(`http://localhost:5000/uploads/${storedProfileImage}`);
     }
   }, []);
 
   const handleLogout = () => {
-    // 예시: 로컬 스토리지에서 사용자 이름을 제거
     localStorage.removeItem('userName');
+    localStorage.removeItem('userProfileImage');
     setUserName(null);
+    setProfileImage(null);
+    navigate('/login');
+  };
+
+  const toggleDropdown = () => {
+    setDropdownVisible(!dropdownVisible);
   };
 
   return (
@@ -26,12 +38,26 @@ const Header = () => {
       <div className={styles['black-nav']}>
         <div className={styles.logo}>
           <Link to="/">
-            <img src="./img/sec.png" alt="로고" style={{ width: '100px', height: '45px' }} />
+            <img src="./img/1.webp" alt="로고" style={{ width: '100px', height: '45px' }} />
           </Link>
         </div>
         {userName ? (
           <div className={styles['logout-div']}>
-            {userName} <button onClick={handleLogout} className={styles['logout']}>로그아웃</button>
+            <div className={styles['profile-container']}>
+              <img
+                src={profileImage || "./img/loginicon2.png"} 
+                alt="Profile"
+                className={styles['profile-image']}
+                onClick={toggleDropdown}
+              />
+              <span>{userName}</span>
+              {dropdownVisible && (
+                <div className={styles['dropdown-menu']}>
+                  <Link to="/userpage">Profile</Link>
+                  <button onClick={handleLogout}>Logout</button>
+                </div>
+              )}
+            </div>
           </div>
         ) : (
           <Link to="/login">

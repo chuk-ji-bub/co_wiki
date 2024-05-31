@@ -1,0 +1,45 @@
+.root-container {
+    padding: 20px;
+  }
+  
+  .add-term {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .add-term input {
+    padding: 10px;
+    font-size: 16px;
+  }
+  
+  .add-term button {
+    padding: 10px;
+    font-size: 16px;
+    background-color: mediumaquamarine;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  li {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  li button {
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 5px 10px;
+  }
+  

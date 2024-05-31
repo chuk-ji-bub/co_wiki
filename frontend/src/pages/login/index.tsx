@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Header from '../../components/Header/Header';
 import './style.css';
+import Header from '../../components/Header/Header';
 
-function Login() {
+const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -12,12 +12,12 @@ function Login() {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5000/api/get_name', {  
+      const response = await fetch('http://localhost:5000/api/get_name', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }), 
+        body: JSON.stringify({ email, password }),
       });
 
       if (response.ok) {
@@ -26,8 +26,8 @@ function Login() {
           console.log('아이디 또는 비밀번호가 다릅니다.');
           alert('아이디 또는 비밀번호가 다릅니다.');
         } else {
-          // 로그인 성공 시 사용자 이름을 로컬 스토리지에 저장
           localStorage.setItem('userName', data.name);
+          localStorage.setItem('userRole', data.role); // 역할 저장
           console.log('서버에서 받은 이름:', data.name);
           navigate('/'); // 로그인 성공 시 메인 페이지로 이동
           alert(data.name + '님 환영합니다');
@@ -77,6 +77,6 @@ function Login() {
       </div>
     </div>
   );
-}
+};
 
 export default Login;
