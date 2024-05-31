@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './style.css';
 import Header from '../../components/Header/Header';
 
-function Signup() {
+const Signup: React.FC = () => {
   const [isIdTaken, setIsIdTaken] = useState<boolean | null>(null);
   const [availableId, setAvailableId] = useState<string>('');
   const [isCreateButtonEnabled, setIsCreateButtonEnabled] = useState<boolean>(false);
@@ -11,6 +11,8 @@ function Signup() {
   const [passwordsMatch, setPasswordsMatch] = useState<boolean>(true);
   const [isPasswordEmpty, setIsPasswordEmpty] = useState<boolean>(true);
   const [name, setName] = useState<string>('');
+  const [role, setRole] = useState<string>(''); // 교수 or 학생 선택
+  const [professorCode, setProfessorCode] = useState<string>(''); // 교수 코드 입력
   const navigate = useNavigate();
 
   const checkUsername = async () => {
@@ -24,7 +26,7 @@ function Signup() {
     }
 
     try {
-      const response = await fetch(`http://127.0.0.1:5000/api/check_username/${id}`);
+      const response = await fetch(`http://localhost:5000/api/check_username/${id}`);
       const data = await response.json();
 
       setIsIdTaken(data.isTaken);
@@ -73,7 +75,7 @@ function Signup() {
 
     if (isCreateButtonEnabled) {
       try {
-        const response = await fetch('http://127.0.0.1:5000/api/create/', {
+        const response = await fetch('http://localhost:5000/api/create/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -83,14 +85,15 @@ function Signup() {
             password: (document.querySelector("input[name='password']") as HTMLInputElement)?.value,
             confirm_password: (document.querySelector("input[name='confirm_password']") as HTMLInputElement)?.value,
             name,
+            role,
+            professorCode,
           }),
         });
 
         const data = await response.json();
-
         if (response.ok) {
           alert(data.message);
-          navigate(data.redirect); // 로그인 페이지로 리디렉션
+          navigate('/login'); // 로그인 페이지로 리디렉션
         } else {
           alert(data.error);
         }
@@ -119,6 +122,19 @@ function Signup() {
             <p><input type="password" name="password" placeholder="password" onChange={checkPasswordMatch} /></p>
             <p><input type="password" name="confirm_password" placeholder="confirm_password" onChange={checkPasswordMatch} className={getPasswordInputClassName()} /></p>
             <p><input type="text" name="name" placeholder="name" value={name} onChange={handleNameChange} /></p>
+            <div className="role-selection">
+              <label>
+                <input type="radio" name="role" value="학생" checked={role === '학생'} onChange={() => setRole('학생')} />
+                학생
+              </label>
+              <label>
+                <input type="radio" name="role" value="교수" checked={role === '교수'} onChange={() => setRole('교수')} />
+                교수
+              </label>
+            </div>
+            {role === '교수' && (
+              <p><input type="text" name="professor_code" placeholder="교수 코드" value={professorCode} onChange={(e) => setProfessorCode(e.target.value)} /></p>
+            )}
             <p><button onClick={handleCreateButtonClick} disabled={!isCreateButtonEnabled}>create</button></p>
           </form>
           {isIdTaken === true && <p className="error-message">이미 사용 중인 아이디입니다.</p>}
@@ -127,6 +143,6 @@ function Signup() {
       </div>
     </div>
   );
-}
+};
 
 export default Signup;
