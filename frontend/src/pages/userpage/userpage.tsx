@@ -1,12 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import './userpage.css';
 
 const UserPage: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string | null>(null);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      setFile(event.target.files[0]);
+  useEffect(() => {
+    const storedUserName = localStorage.getItem('userName');
+    setUserName(storedUserName);
+  }, []);
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const selectedFile = event.target.files[0];
+      setFile(selectedFile);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result as string);
+      };
+      reader.readAsDataURL(selectedFile);
     }
   };
 
@@ -15,7 +28,9 @@ const UserPage: React.FC = () => {
       const formData = new FormData();
       formData.append('file', file);
       const userId = localStorage.getItem('userName'); // 실제 사용자 ID로 교체 필요
-      formData.append('user_id', userId as string);
+      if (userId) {
+        formData.append('user_id', userId);
+      }
 
       try {
         const response = await fetch('http://localhost:5000/api/upload_profile', {
@@ -39,9 +54,16 @@ const UserPage: React.FC = () => {
 
   return (
     <div className="user-page">
-      <h1>Upload Profile Image</h1>
-      <input type="file" onChange={handleFileChange} />
-      <button onClick={handleUpload}>Upload</button>
+      <h1>{userName ? `어서오세요 ${userName} 님` : 'Upload Profile Image'}</h1>
+      <div className="file-upload-container">
+        {preview && <img src={preview} alt="Image Preview" className="image-preview" />}
+        <div className="button-container">
+          <input type="file" id="file-upload" onChange={handleFileChange} />
+          <label htmlFor="file-upload">Choose File</label>
+          <button onClick={handleUpload}>Upload</button>
+          <a href="http://localhost:3000/root" className="db-access-button">DB Access</a>
+        </div>
+      </div>
     </div>
   );
 };
