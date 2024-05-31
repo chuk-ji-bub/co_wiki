@@ -17,19 +17,19 @@ const MyEditor: React.FC = () => {
   };
 
   return (
-    <div className="editor-container">
-      <div className="text-panel">
-        <div className={`text-content ${expanded ? 'expanded' : ''}`}>
+    <div className="editor-container2">
+      <div className="text-panel2">
+        <div className={`text-content2 ${expanded ? 'expanded' : ''}`}>
           {/* 텍스트 내용 */}
           {/* 여러 줄의 텍스트를 표시 */}
           {/* 예시: */}
           <p>JavaScript (JS)는 간단하고, 멀티 패러다임을 지원하는...</p>
         </div>
-        <button className="expand-button" onClick={handleExpandClick}>
+        <button className="expand-button2" onClick={handleExpandClick}>
           {expanded ? '접기' : '펼치기'}
         </button>
       </div>
-      <div className="bookmarks-panel">
+      <div className="bookmarks-panel2">
         <h3>바로가기</h3>
         <ol>
           {bookmarks.map((bookmark, index) => (
@@ -37,7 +37,7 @@ const MyEditor: React.FC = () => {
           ))}
         </ol>
       </div>
-      <div className="bookmarks-panel">
+      <div className="bookmarks-panel2">
         <h3>북마크</h3>
         <ol>
           {/* 북마크 목록 */}
@@ -46,7 +46,7 @@ const MyEditor: React.FC = () => {
           <li>TypeScript 학습 자료</li>
         </ol>
       </div>
-      <button className="save-button" onClick={handleSaveClick}>
+      <button className="save-button2" onClick={handleSaveClick}>
         저장
       </button>
     </div>
