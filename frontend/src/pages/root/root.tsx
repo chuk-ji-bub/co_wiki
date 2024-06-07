@@ -1,28 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import './root.css';
 
 interface Term {
   id: number;
-  term: string;
+  kr: string;
+  en: string;
   definition: string;
 }
 
 const Root: React.FC = () => {
   const [terms, setTerms] = useState<Term[]>([]);
-  const [newTerm, setNewTerm] = useState('');
-  const [newDefinition, setNewDefinition] = useState('');
-  const navigate = useNavigate();
-  const userRole = localStorage.getItem('userRole');
+  const [newTerm, setNewTerm] = useState<{ kr: string; en: string; definition: string }>({ kr: '', en: '', definition: '' });
 
   useEffect(() => {
-    if (userRole !== '교수') {
-      navigate('/test2');
-    }
-  }, [userRole, navigate]);
-
-  useEffect(() => {
-    const fetchData = async () => {
+    const fetchTerms = async () => {
       try {
         const response = await fetch('http://localhost:5000/api/dictionary');
         const data = await response.json();
@@ -32,8 +23,13 @@ const Root: React.FC = () => {
       }
     };
 
-    fetchData();
+    fetchTerms();
   }, []);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setNewTerm({ ...newTerm, [name]: value });
+  };
 
   const handleAddTerm = async () => {
     try {
@@ -42,56 +38,52 @@ const Root: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ term: newTerm, definition: newDefinition }),
+        body: JSON.stringify(newTerm),
       });
-
       const data = await response.json();
       setTerms([...terms, data]);
-      setNewTerm('');
-      setNewDefinition('');
+      setNewTerm({ kr: '', en: '', definition: '' });
     } catch (error) {
       console.error('Error adding term:', error);
-    }
-  };
-
-  const handleDeleteTerm = async (id: number) => {
-    try {
-      await fetch(`http://localhost:5000/api/dictionary/${id}`, {
-        method: 'DELETE',
-      });
-
-      setTerms(terms.filter((term) => term.id !== id));
-    } catch (error) {
-      console.error('Error deleting term:', error);
     }
   };
 
   return (
     <div className="root-container">
       <h1>Dictionary Management</h1>
-      <div className="add-term">
-        <input
-          type="text"
-          placeholder="New term"
-          value={newTerm}
-          onChange={(e) => setNewTerm(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Definition"
-          value={newDefinition}
-          onChange={(e) => setNewDefinition(e.target.value)}
-        />
-        <button onClick={handleAddTerm}>Add</button>
-      </div>
-      <ul>
+      <div className="term-list">
         {terms.map((term) => (
-          <li key={term.id}>
-            <strong>{term.term}</strong>: {term.definition}
-            <button onClick={() => handleDeleteTerm(term.id)}>Delete</button>
-          </li>
+          <div key={term.id} className="term-item">
+            <p><strong>KR:</strong> {term.kr}</p>
+            <p><strong>EN:</strong> {term.en}</p>
+            <p><strong>Definition:</strong> {term.definition}</p>
+          </div>
         ))}
-      </ul>
+      </div>
+      <div className="add-term">
+        <h2>Add New Term</h2>
+        <input
+          type="text"
+          name="kr"
+          value={newTerm.kr}
+          onChange={handleInputChange}
+          placeholder="Korean term"
+        />
+        <input
+          type="text"
+          name="en"
+          value={newTerm.en}
+          onChange={handleInputChange}
+          placeholder="English term"
+        />
+        <textarea
+          name="definition"
+          value={newTerm.definition}
+          onChange={handleInputChange}
+          placeholder="Definition"
+        />
+        <button onClick={handleAddTerm}>Add Term</button>
+      </div>
     </div>
   );
 };

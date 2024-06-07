@@ -1,5 +1,3 @@
-// middle.tsx
-
 import React from 'react';
 import './middle.css';
 
@@ -16,6 +14,3 @@ const MiddleBox: React.FC<MiddleProps> = ({ definition }) => {
 };
 
 export default MiddleBox;
-
-
-

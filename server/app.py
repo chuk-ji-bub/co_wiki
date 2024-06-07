@@ -120,28 +120,29 @@ def check_username(username):
 @app.route('/api/dictionary', methods=['GET'])
 def get_terms():
     db = get_db_connection()
-    cursor = db.cursor(pymysql.cursors.DictCursor)  # 결과를 딕셔너리 형태로 반환
-    cursor.execute("SELECT * FROM dictionary")
+    cursor = db.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT kr, en, definition FROM dictionary")
     terms = cursor.fetchall()
     cursor.close()
     db.close()
     return jsonify(terms)
 
 
-
 @app.route('/api/dictionary', methods=['POST'])
 def add_term():
     data = request.get_json()
-    term = data.get('term')
+    kr = data.get('kr')
+    en = data.get('en')
     definition = data.get('definition')
 
     db = get_db_connection()
     cursor = db.cursor()
-    cursor.execute("INSERT INTO dictionary (term, definition) VALUES (%s, %s)", (term, definition))
+    cursor.execute("INSERT INTO dictionary (kr, en, definition) VALUES (%s, %s, %s)", (kr, en, definition))
     db.commit()
     cursor.close()
     db.close()
-    return jsonify({'id': cursor.lastrowid, 'term': term, 'definition': definition})
+    return jsonify({'id': cursor.lastrowid, 'kr': kr, 'en': en, 'definition': definition})
+
 
 @app.route('/api/dictionary/<int:id>', methods=['DELETE'])
 def delete_term(id):
