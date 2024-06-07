@@ -13,3 +13,24 @@
   border: solid black;
   margin: auto; /* 가로 세로 중앙 정렬 */
 }
+
+.definition-card {
+  background-color: white; /* 카드 배경색 */
+  padding: 20px; /* 카드 내부 패딩 */
+  border-radius: 10px; /* 카드 모서리 둥글게 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 카드 그림자 효과 */
+  width: 100%; /* 카드 너비 */
+  margin-top: 20px; /* 카드 상단 여백 */
+}
+
+.definition-card h2 {
+  margin-top: 0; /* 제목 상단 여백 제거 */
+  font-size: 24px; /* 제목 폰트 크기 */
+  color: #333; /* 제목 색상 */
+}
+
+.definition-card p {
+  font-size: 18px; /* 본문 폰트 크기 */
+  color: #666; /* 본문 색상 */
+  line-height: 1.6; /* 본문 줄 간격 */
+}
