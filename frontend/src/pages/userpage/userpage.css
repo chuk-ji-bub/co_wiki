@@ -1,82 +1,42 @@
 .user-page {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background-color: #f9f9f9;
-    font-family: Arial, sans-serif;
-  }
-  
-  .user-page h1 {
-    color: #333;
-    margin-bottom: 20px;
-  }
-  
-  .user-page input[type="file"] {
-    display: none;
-  }
-  
-  .user-page label {
-    display: inline-block;
-    padding: 10px 20px;
-    color: #fff;
-    background-color: #007bff;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .user-page button {
-    padding: 10px 20px;
-    color: #fff;
-    background-color: #28a745;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  .user-page button:hover {
-    background-color: #218838;
-  }
-  
-  .user-page label:hover {
-    background-color: #0056b3;
-  }
-  
-  .user-page .image-preview {
-    margin: 20px 0;
-    max-width: 100%;
-    max-height: 200px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    object-fit: contain;
-  }
-  
-  .file-upload-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .button-container {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-  }
-  
-  .db-access-button {
-    padding: 10px 20px;
-    color: #fff;
-    background-color: #ffc107;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    text-decoration: none;
-  }
-  
-  .db-access-button:hover {
-    background-color: #e0a800;
-  }
-  
+  padding: 20px;
+  background-color: #f2f2f2;
+  min-height: 100vh;
+}
+
+.profile-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.profile-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-right: 20px;
+}
+
+.user-info {
+  font-size: 18px;
+}
+
+.upload-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.upload-container input {
+  margin-bottom: 10px;
+}
+
+.upload-container button {
+  background-color: mediumaquamarine;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 10px 15px;
+}

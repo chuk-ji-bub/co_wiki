@@ -1,11 +1,9 @@
-// 메인페이지 왼쪽 선택할거
-// left.tsx
-
 import React, { useState, useEffect } from 'react';
 import './left.css';
 
 interface Term {
-  term: string;
+  kr: string;
+  en: string;
   definition: string;
 }
 
@@ -15,6 +13,7 @@ interface LeftProps {
 
 const LeftBox: React.FC<LeftProps> = ({ onTermClick }) => {
   const [terms, setTerms] = useState<Term[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
     const fetchTerms = async () => {
@@ -30,15 +29,31 @@ const LeftBox: React.FC<LeftProps> = ({ onTermClick }) => {
     fetchTerms();
   }, []);
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const filteredTerms = terms.filter(term =>
+    term.kr.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    term.en.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="editor-container1">
-      {terms.map((term, index) => (
+      <input
+        type="text"
+        placeholder="Search..."
+        value={searchTerm}
+        onChange={handleSearchChange}
+        className="search-input"
+      />
+      {filteredTerms.map((term, index) => (
         <div
           key={index}
           className="term"
           onClick={() => onTermClick(term.definition)}
         >
-          {term.term}
+          {term.kr} / {term.en}
         </div>
       ))}
     </div>
