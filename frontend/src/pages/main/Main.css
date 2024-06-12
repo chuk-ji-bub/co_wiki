@@ -24,7 +24,7 @@ body {
 .content {
   display: flex;
   flex: 1;
-  padding-top: 60px; /* Header height */
+  padding-top: 80px; /* Header height */
   overflow: hidden; /* 좌우 스크롤 제거 */
 }
 
@@ -114,16 +114,4 @@ body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 96%;
   margin-top: 20px;
-}
-
-.definition-card h2 {
-  margin-top: 0;
-  font-size: 24px;
-  color: var(--accent-color);
-}
-
-.definition-card p {
-  font-size: 18px;
-  color: var(--secondary-text);
-  line-height: 1.6;
 }
