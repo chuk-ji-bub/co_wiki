@@ -1,20 +1,36 @@
+:root {
+  --primary-bg: #1e1e1e;
+  --secondary-bg: #2d2d2d;
+  --primary-text: #ffffff;
+  --secondary-text: #b0b0b0;
+  --accent-color: #007acc;
+  --danger-color: #e06c75;
+  --border-radius: 5px;
+}
+
+body {
+  background-color: var(--primary-bg);
+  color: var(--primary-text);
+  font-family: 'Fira Code', monospace;
+}
+
 .root-container {
   padding: 20px;
+  padding-top: 69px; /* 헤더에 가리지 않도록 상단 패딩 추가 */
 }
 
-.term-list {
-  margin-bottom: 20px;
-}
-
-.term-item {
-  border: 1px solid #ccc;
+.search-input {
+  width: 100%;
   padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 5px;
+  margin-bottom: 20px;
+  border: 1px solid var(--secondary-bg);
+  border-radius: var(--border-radius);
+  background-color: var(--secondary-bg);
+  color: var(--primary-text);
 }
 
 .add-term {
-  margin-top: 20px;
+  margin-bottom: 20px; /* term-list와의 간격 추가 */
 }
 
 .add-term input,
@@ -23,19 +39,56 @@
   width: 100%;
   margin-bottom: 10px;
   padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  border: 1px solid var(--secondary-bg);
+  border-radius: var(--border-radius);
+  background-color: var(--secondary-bg);
+  color: var(--primary-text);
 }
 
 .add-term button {
   padding: 10px 20px;
-  background-color: mediumaquamarine;
-  color: white;
+  background-color: var(--accent-color);
+  color: var(--primary-text);
   border: none;
-  border-radius: 5px;
+  border-radius: var(--border-radius);
   cursor: pointer;
 }
 
 .add-term button:hover {
-  background-color: darkseagreen;
+  background-color: darken(var(--accent-color), 10%);
 }
+
+.term-list {
+  margin-bottom: 20px;
+}
+
+.term-item {
+  border: 1px solid var(--secondary-bg);
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: var(--border-radius);
+  background-color: var(--secondary-bg);
+}
+
+.term-item p {
+  margin: 5px 0;
+}
+
+.term-item button {
+  align-self: flex-end;
+  padding: 5px 10px;
+  background-color: var(--danger-color);
+  color: var(--primary-text);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+}
+
+.term-item button:hover {
+  background-color: darken(var(--danger-color), 10%);
+}
+
+h1, h2 {
+  color: var(--accent-color);
+}
+
