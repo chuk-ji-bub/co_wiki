@@ -20,6 +20,24 @@ body {
   align-items: center;
   padding: 20px;
   padding-top: 80px; /* 헤더에 가리지 않도록 패딩 추가 */
+  padding-bottom: 20px; /* 아래쪽 여백 추가 */
+  height: calc(100vh - 80px); /* 전체 높이에서 헤더 높이를 뺀 값 */
+  overflow-y: auto; /* 세로 스크롤바 추가 */
+}
+
+.userpage-container::-webkit-scrollbar {
+  width: 12px; /* 스크롤바 너비 */
+}
+
+.userpage-container::-webkit-scrollbar-track {
+  background: var(--primary-bg); /* 스크롤바 트랙 색상 */
+  border-radius: 10px; /* 스크롤바 트랙 둥근 모서리 */
+}
+
+.userpage-container::-webkit-scrollbar-thumb {
+  background-color: var(--secondary-bg); /* 스크롤바 색상 */
+  border-radius: 10px; /* 스크롤바 둥근 모서리 */
+  border: 3px solid var(--primary-bg); /* 스크롤바와 트랙 사이 간격 */
 }
 
 .profile-section, .settings-section, .activity-section {

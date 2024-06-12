@@ -6,7 +6,6 @@
   align-items: flex-start;
   padding: 20px;
   background-color: var(--secondary-bg);
-  overflow-y: auto; /* 내부 스크롤 활성화 */
   border-radius: var(--border-radius);
   margin: 20px;
   max-height: 77.4vh; /* 최대 높이 설정 */
