@@ -98,13 +98,16 @@ body {
 
 .dropdownMenu {
   position: absolute;
-  top: 100%;
+  top: 60px; /* 헤더 아래로 메뉴를 이동 */
   right: 0;
   background-color: var(--secondary-bg);
   border-radius: var(--border-radius);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  z-index: 30; /* z-index를 높여서 메뉴가 잘리지 않도록 함 */
+  width: 118px;
 }
+
 
 .dropdownItem {
   padding: 10px 20px;

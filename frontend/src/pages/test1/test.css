@@ -122,3 +122,8 @@ button {
 button:hover {
   background-color: darken(var(--accent-color), 10%);
 }
+
+
+.logoutButton {
+  margin-bottom: 20px; /* 밑에 여백 추가 */
+}
