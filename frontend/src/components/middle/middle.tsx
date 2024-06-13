@@ -20,7 +20,7 @@ const MiddleBox: React.FC<MiddleProps> = ({ term }) => {
           <p>{term.definition}</p>
         </div>
       ) : (
-        <p>Please select a term to see its definition.</p>
+        <p>단어를 선택해주세요.</p>
       )}
     </div>
   );
