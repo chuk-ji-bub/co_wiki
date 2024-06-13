@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './Root.css';
+import './root.css';
 
 interface Term {
   id: number;
