@@ -152,8 +152,7 @@ def delete_term(id):
     db.commit()
     cursor.close()
     db.close()
-    return jsonify({'message': 'Term deleted successfully'})
-
+    return '', 204
 
 @app.route('/api/upload_profile', methods=['POST'])
 def upload_profile():
