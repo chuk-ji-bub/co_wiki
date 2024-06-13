@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import LeftBox from '../../components/left/left';
 import MiddleBox from '../../components/middle/middle';
 import Header from '../../components/Header/Header';
-
+import './Main.css';
 
 interface Term {
   kr: string;

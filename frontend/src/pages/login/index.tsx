@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import './style.css';
+import './login.css';
 import Header from '../../components/Header/Header';
 
 const Login: React.FC = () => {
