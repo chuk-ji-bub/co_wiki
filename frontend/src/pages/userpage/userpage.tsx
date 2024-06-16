@@ -1,74 +1,82 @@
-import React, { useState, useEffect, ChangeEvent } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './userpage.css';
 import Header from '../../components/Header/Header';
+import { FaKey, FaBell, FaLock } from 'react-icons/fa'; // 아이콘 추가
 
-const UserPage: React.FC = () => {
-  const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
+const Userpage: React.FC = () => {
   const [userName, setUserName] = useState<string | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
 
   useEffect(() => {
+    // 예시: 로컬 스토리지 또는 서버에서 사용자 정보 가져오기
     const storedUserName = localStorage.getItem('userName');
-    setUserName(storedUserName);
+    const storedEmail = localStorage.getItem('email');
+    const storedProfileImage = localStorage.getItem('profileImage');
+
+    if (storedUserName) {
+      setUserName(storedUserName);
+    }
+    if (storedEmail) {
+      setEmail(storedEmail);
+    }
+    if (storedProfileImage) {
+      setProfileImage(storedProfileImage);
+    }
   }, []);
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      const selectedFile = event.target.files[0];
-      setFile(selectedFile);
+  const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string);
+      reader.onload = (event) => {
+        const result = event.target?.result as string;
+        setProfileImage(result);
+        localStorage.setItem('profileImage', result);
       };
-      reader.readAsDataURL(selectedFile);
-    }
-  };
-
-  const handleUpload = async () => {
-    if (file) {
-      const formData = new FormData();
-      formData.append('file', file);
-      const userId = localStorage.getItem('userName'); // 실제 사용자 ID로 교체 필요
-      if (userId) {
-        formData.append('user_id', userId);
-      }
-
-      try {
-        const response = await fetch('http://localhost:5000/api/upload_profile', {
-          method: 'POST',
-          body: formData,
-        });
-        const data = await response.json();
-        if (response.ok) {
-          alert('Profile image uploaded successfully');
-          localStorage.setItem('userProfileImage', data.filepath);
-          window.location.reload();
-        } else {
-          alert(data.error);
-        }
-      } catch (error) {
-        console.error('Error uploading profile image:', error);
-        alert('Profile image upload failed');
-      }
+      reader.readAsDataURL(e.target.files[0]);
     }
   };
 
   return (
-    <div className="header"><Header/>
-    <div className="user-page">
-      <h1>{userName ? `어서오세요, ${userName}님` : 'Upload Profile Image'}</h1>
-      <div className="file-upload-container">
-        {preview && <img src={preview} alt="Image Preview" className="image-preview" />}
-        <div className="button-container">
-          <input type="file" id="file-upload" onChange={handleFileChange} />
-          <label htmlFor="file-upload">사진변경</label>
-          <button onClick={handleUpload}>올리기</button>
-          <a href="http://localhost:3000/root" className="db-access-button">DB 접근</a>
+    <div>
+      <Header />
+      <div className="userpage-container">
+        <div className="profile-section">
+          <div className="profile-image-container">
+            {profileImage ? (
+              <img src={profileImage} alt="Profile" className="profile-image" />
+            ) : (
+              <div className="profile-placeholder">No Image</div>
+            )}
+            <input type="file" onChange={handleProfileImageChange} />
+          </div>
+          <h2>{userName}</h2>
+          <p>{email}</p>
         </div>
+        <div className="settings-section">
+          <h3>Account Settings</h3>
+          <Link to="/change-password" className="settings-item">
+            <FaKey className="settings-icon" />
+            Change Password
+          </Link>
+          <Link to="/notifications" className="settings-item">
+            <FaBell className="settings-icon" />
+            Notification Settings
+          </Link>
+          <Link to="/privacy" className="settings-item">
+            <FaLock className="settings-icon" />
+            Privacy Settings
+          </Link>
+        </div>
+        <div className="activity-section">
+          <h3>Recent Activity</h3>
+          <p>No recent activity</p>
+        </div>
+        <button onClick={() => localStorage.clear()}>Logout</button>
       </div>
-    </div>
     </div>
   );
 };
 
-export default UserPage;
+export default Userpage;
