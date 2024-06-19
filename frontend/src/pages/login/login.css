@@ -1,19 +1,21 @@
-/* style.css 이게 login.css임*/
 :root {
   --primary-bg: #1e1e1e;
   --secondary-bg: #2d2d2d;
   --primary-text: #ffffff;
   --secondary-text: #b0b0b0;
   --accent-color: #007acc;
+  --danger-color: #e06c75;
   --border-radius: 5px;
 }
 
+/* 전체적인 배경 및 텍스트 스타일 */
 body {
   background-color: var(--primary-bg);
   color: var(--primary-text);
   font-family: 'Fira Code', monospace;
 }
 
+/* 스타일링된 컨테이너 */
 .login-container {
   display: flex;
   flex-direction: column;
@@ -22,20 +24,24 @@ body {
   height: 100vh;
   background-color: var(--primary-bg);
   position: relative;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
+/* 로그인 폼 스타일 */
 .login-form {
   width: 600px;
   background-color: var(--secondary-bg);
   border-radius: var(--border-radius);
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  margin: 0 auto;
+  margin: 0 auto; /* 가로 가운데 정렬 */
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
+/* 로그인 입력 필드 스타일 */
 .login-input {
   width: 75%;
   padding: 10px;
@@ -49,11 +55,13 @@ body {
   color: var(--primary-text);
 }
 
+/* 로그인 버튼 컨테이너 */
 .login-button-container {
   width: 75%;
-  text-align: center;
+  text-align: center; /* 내부 텍스트를 가로 가운데 정렬 */
 }
 
+/* 로그인 버튼 스타일 */
 .login-button, .signup-button {
   background-color: var(--accent-color);
   color: var(--primary-text);
@@ -61,6 +69,7 @@ body {
   border-radius: var(--border-radius);
   cursor: pointer;
   margin-top: 15px;
+  margin-bottom: 20px;
   font-size: 20px;
   padding: 10px 20px;
   width: 100%;
