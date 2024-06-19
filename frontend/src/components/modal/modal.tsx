@@ -24,7 +24,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit }) => {
         <h2>Change Password</h2>
         <form onSubmit={handleSubmit}>
           <div>
-            <label>Old Password</label>
+            <label>Old Password : </label>
             <input
               type="password"
               value={oldPassword}
@@ -33,7 +33,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit }) => {
             />
           </div>
           <div>
-            <label>New Password</label>
+            <label>New Password : </label>
             <input
               type="password"
               value={newPassword}
