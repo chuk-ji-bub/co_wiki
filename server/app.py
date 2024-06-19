@@ -1,3 +1,4 @@
+
 from flask import Flask, request, jsonify, render_template, redirect, send_from_directory
 from flask_cors import CORS
 import pymysql
@@ -152,7 +153,8 @@ def delete_term(id):
     db.commit()
     cursor.close()
     db.close()
-    return '', 204
+    return jsonify({'message': 'Term deleted successfully'})
+
 
 @app.route('/api/upload_profile', methods=['POST'])
 def upload_profile():

@@ -1,14 +1,27 @@
 import React from 'react';
 import './middle.css';
 
-interface MiddleProps {
+interface Term {
+  kr: string;
+  en: string;
   definition: string;
 }
 
-const MiddleBox: React.FC<MiddleProps> = ({ definition }) => {
+interface MiddleProps {
+  term: Term | null;
+}
+
+const MiddleBox: React.FC<MiddleProps> = ({ term }) => {
   return (
     <div className="editor-container2">
-      <p>{definition}</p>
+      {term ? (
+        <div className="definition-card">
+          <h2>{term.kr} / {term.en}</h2>
+          <p>{term.definition}</p>
+        </div>
+      ) : (
+        <p>Please select a term to see its definition.</p>
+      )}
     </div>
   );
 };

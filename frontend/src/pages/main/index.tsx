@@ -1,27 +1,31 @@
-//main 페이지
-
 import React, { useState } from 'react';
 import LeftBox from '../../components/left/left';
 import MiddleBox from '../../components/middle/middle';
-
 import Header from '../../components/Header/Header';
+import './Main.css';
 
+interface Term {
+  kr: string;
+  en: string;
+  definition: string;
+}
 
-const App: React.FC = () => {
-  const [definition, setDefinition] = useState<string>('');
+const Main: React.FC = () => {
+  const [selectedTerm, setSelectedTerm] = useState<Term | null>(null);
 
-  const handleTermClick = (definition: string) => {
-    setDefinition(definition);
+  const handleTermClick = (term: Term) => {
+    setSelectedTerm(term);
   };
 
   return (
     <div className="main-container">
       <Header />
-      <LeftBox onTermClick={handleTermClick} />
-      <MiddleBox definition={definition} />
-
+      <div className="content">
+        <LeftBox onTermClick={handleTermClick} />
+        <MiddleBox term={selectedTerm} />
+      </div>
     </div>
   );
 };
 
-export default App;
+export default Main;

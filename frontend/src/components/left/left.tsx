@@ -8,7 +8,7 @@ interface Term {
 }
 
 interface LeftProps {
-  onTermClick: (definition: string) => void;
+  onTermClick: (term: Term) => void;
 }
 
 const LeftBox: React.FC<LeftProps> = ({ onTermClick }) => {
@@ -47,15 +47,17 @@ const LeftBox: React.FC<LeftProps> = ({ onTermClick }) => {
         onChange={handleSearchChange}
         className="search-input"
       />
-      {filteredTerms.map((term, index) => (
-        <div
-          key={index}
-          className="term"
-          onClick={() => onTermClick(term.definition)}
-        >
-          {term.kr} / {term.en}
-        </div>
-      ))}
+      <div className="term-list">
+        {filteredTerms.map((term, index) => (
+          <div
+            key={index}
+            className="term"
+            onClick={() => onTermClick(term)}
+          >
+            {term.kr} / {term.en}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

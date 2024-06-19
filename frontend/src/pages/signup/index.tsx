@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './style.css';
+import './signup.css';
 import Header from '../../components/Header/Header';
 
 const Signup: React.FC = () => {
@@ -13,26 +13,41 @@ const Signup: React.FC = () => {
   const [name, setName] = useState<string>('');
   const [role, setRole] = useState<string>(''); // 교수 or 학생 선택
   const [professorCode, setProfessorCode] = useState<string>(''); // 교수 코드 입력
+  const [idErrorMessage, setIdErrorMessage] = useState<string>(''); // ID 오류 메시지
   const navigate = useNavigate();
 
-  const checkUsername = async () => {
-    const idInput = document.querySelector("input[name='id']") as HTMLInputElement;
-    const id = idInput?.value;
+  const validateId = (id: string) => {
+    const englishOnly = /^[a-zA-Z]*$/;
+    return englishOnly.test(id);
+  };
 
-    if (!id) {
+  const handleIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newId = e.target.value;
+    if (!validateId(newId)) {
+      setIdErrorMessage('ID는 영어만 입력 가능합니다.');
+    } else {
+      setIdErrorMessage('');
+    }
+    setAvailableId(newId);
+    setIsIdFieldEditable(true); // ID가 변경되면 다시 수정 가능
+    setIsCreateButtonEnabled(false); // ID가 변경되면 Create 버튼 비활성화
+    setIsIdTaken(null); // ID 중복 상태 초기화
+  };
+
+  const checkUsername = async () => {
+    if (!availableId) {
       setIsIdTaken(null);
       setIsCreateButtonEnabled(false);
       return;
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/check_username/${id}`);
+      const response = await fetch(`http://localhost:5000/api/check_username/${availableId}`);
       const data = await response.json();
 
       setIsIdTaken(data.isTaken);
       if (!data.isTaken) {
-        setAvailableId(id);
-        setIsCreateButtonEnabled(!isPasswordEmpty && passwordsMatch && !!name && !isIdTaken);
+        setIsCreateButtonEnabled(!isPasswordEmpty && passwordsMatch && !!name && validateId(availableId));
         setIsIdFieldEditable(false);
       } else {
         setIsCreateButtonEnabled(false);
@@ -50,14 +65,14 @@ const Signup: React.FC = () => {
     setPasswordsMatch(password === confirm_password);
     setIsPasswordEmpty(password === '');
 
-    setIsCreateButtonEnabled(!isPasswordEmpty && passwordsMatch && !!name && !isIdTaken);
+    setIsCreateButtonEnabled(!isPasswordEmpty && passwordsMatch && !!name && !isIdTaken && validateId(availableId));
   };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
     setName(newName);
 
-    setIsCreateButtonEnabled(!isPasswordEmpty && passwordsMatch && !!newName && !isIdTaken);
+    setIsCreateButtonEnabled(!isPasswordEmpty && passwordsMatch && !!newName && !isIdTaken && validateId(availableId));
   };
 
   const getPasswordInputClassName = (): string => {
@@ -115,10 +130,13 @@ const Signup: React.FC = () => {
                 type="text"
                 name="id"
                 placeholder="id"
+                value={availableId}
+                onChange={handleIdChange}
                 readOnly={!isIdFieldEditable}
               />
-              <button type="button" onClick={checkUsername}>Check ID</button>
+              <button type="button" onClick={checkUsername} disabled={idErrorMessage !== ''}>Check ID</button>
             </div>
+            {idErrorMessage && <p className="error-message">{idErrorMessage}</p>}
             <p><input type="password" name="password" placeholder="password" onChange={checkPasswordMatch} /></p>
             <p><input type="password" name="confirm_password" placeholder="confirm_password" onChange={checkPasswordMatch} className={getPasswordInputClassName()} /></p>
             <p><input type="text" name="name" placeholder="name" value={name} onChange={handleNameChange} /></p>
