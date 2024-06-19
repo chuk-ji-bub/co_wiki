@@ -1,5 +1,4 @@
-
-from flask import Flask, request, jsonify, render_template, redirect, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import pymysql
 import os
@@ -15,7 +14,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def get_db_connection():
     db = pymysql.connect(host='127.0.0.1', user='root', password='1234', db='co_wiki', charset='utf8')
     return db
-
 
 @app.route('/api/search', methods=['GET'])
 def search():
@@ -34,7 +32,6 @@ def search():
         definition = '정의가 없습니다.'
 
     return jsonify({'term': term, 'definition': definition})
-
 
 @app.route('/api/get_name', methods=['POST'])
 def get_name():
@@ -64,7 +61,6 @@ def get_name():
 
     except Exception as e:
         return jsonify({'error': str(e)})
-
 
 @app.route('/api/create/', methods=['POST'])
 def create():
@@ -98,6 +94,7 @@ def create():
     except Exception as e:
         return jsonify({'error': str(e)})
 
+
 @app.route('/api/check_username/<username>', methods=['GET'])
 def check_username(username):
     try:
@@ -116,8 +113,7 @@ def check_username(username):
 
     except Exception as e:
         return jsonify({'error': str(e)})
-    
-    
+
 @app.route('/api/dictionary', methods=['GET'])
 def get_terms():
     db = get_db_connection()
@@ -127,7 +123,6 @@ def get_terms():
     cursor.close()
     db.close()
     return jsonify(terms)
-
 
 @app.route('/api/dictionary', methods=['POST'])
 def add_term():
@@ -144,7 +139,6 @@ def add_term():
     db.close()
     return jsonify({'id': cursor.lastrowid, 'kr': kr, 'en': en, 'definition': definition})
 
-
 @app.route('/api/dictionary/<int:id>', methods=['DELETE'])
 def delete_term(id):
     db = get_db_connection()
@@ -154,7 +148,6 @@ def delete_term(id):
     cursor.close()
     db.close()
     return jsonify({'message': 'Term deleted successfully'})
-
 
 @app.route('/api/upload_profile', methods=['POST'])
 def upload_profile():
@@ -181,7 +174,31 @@ def upload_profile():
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-        
+@app.route('/api/change_password', methods=['POST'])
+def change_password():
+    try:
+        data = request.get_json()
+        user_id = data.get('user_id')
+        old_password = data.get('old_password')
+        new_password = data.get('new_password')
+
+        db = get_db_connection()
+        cursor = db.cursor()
+        cursor.execute("SELECT password FROM login WHERE id = %s", (user_id,))
+        result = cursor.fetchone()
+
+        if result and result[0] == old_password:
+            cursor.execute("UPDATE login SET password = %s WHERE id = %s", (new_password, user_id))
+            db.commit()
+            cursor.close()
+            db.close()
+            return jsonify({'message': '비밀번호가 변경되었습니다.'}), 200
+        else:
+            cursor.close()
+            db.close()
+            return jsonify({'error': '현재 비밀번호가 일치하지 않습니다.'}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

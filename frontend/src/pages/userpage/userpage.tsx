@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom';
 import './userpage.css';
 import Header from '../../components/Header/Header';
 import { FaKey, FaBell, FaLock } from 'react-icons/fa'; // 아이콘 추가
+import Modal from '../../components/modal/modal';
 
 const Userpage: React.FC = () => {
   const [userName, setUserName] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     // 예시: 로컬 스토리지 또는 서버에서 사용자 정보 가져오기
@@ -38,6 +40,45 @@ const Userpage: React.FC = () => {
     }
   };
 
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleChangePassword = async (oldPassword: string, newPassword: string) => {
+    const userId = localStorage.getItem('userName'); // 사용자 ID 가져오기
+
+    try {
+      const response = await fetch('http://localhost:5000/api/change_password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          old_password: oldPassword,
+          new_password: newPassword,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(data.message); // 비밀번호 변경 성공 알림
+      } else {
+        alert(data.error); // 비밀번호 변경 실패 알림
+      }
+    } catch (error) {
+      console.error('Error changing password:', error);
+      alert('비밀번호 변경 중 오류가 발생했습니다.');
+    }
+
+    setIsModalOpen(false);
+  };
+
   return (
     <div>
       <Header />
@@ -56,10 +97,10 @@ const Userpage: React.FC = () => {
         </div>
         <div className="settings-section">
           <h3>Account Settings</h3>
-          <Link to="/change-password" className="settings-item">
+          <button onClick={handleOpenModal} className="settings-item">
             <FaKey className="settings-icon" />
             Change Password
-          </Link>
+          </button>
           <Link to="/notifications" className="settings-item">
             <FaBell className="settings-icon" />
             Notification Settings
@@ -71,10 +112,17 @@ const Userpage: React.FC = () => {
         </div>
         <div className="activity-section">
           <h3>Recent Activity</h3>
-          <p>No recent activity</p>
+          <ul className="recent-activity">
+            <li>No recent activity</li>
+          </ul>
         </div>
-        <button onClick={() => localStorage.clear()}>Logout</button>
+        <button onClick={() => localStorage.clear()} className="logoutButton">Logout</button>
       </div>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSubmit={handleChangePassword}
+      />
     </div>
   );
 };
