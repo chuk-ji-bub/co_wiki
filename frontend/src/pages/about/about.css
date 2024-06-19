@@ -1,31 +1,71 @@
+:root {
+  --primary-bg: #1e1e1e;
+  --secondary-bg: #2d2d2d;
+  --primary-text: #ffffff;
+  --secondary-text: #b0b0b0;
+  --accent-color: #007acc;
+  --danger-color: #e06c75;
+  --border-radius: 5px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Fira Code', monospace;
+}
+
 .about-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: var(--secondary-bg);
-    color: var(--primary-text);
-    border-radius: var(--border-radius);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .about-container h1 {
-    text-align: center;
-    color: var(--accent-color);
-    margin-bottom: 20px;
-  }
-  
-  .about-container section {
-    margin-bottom: 20px;
-  }
-  
-  .about-container h2 {
-    color: var(--accent-color);
-    margin-bottom: 10px;
-  }
-  
-  .about-container p {
-    font-size: 16px;
-    line-height: 1.6;
-    color: var(--secondary-text);
-  }
-  
+  padding: 20px;
+  padding-top: 80px; /* 위쪽에 공간 추가 */
+  background-color: var(--primary-bg);
+  color: var(--primary-text);
+  border-radius: var(--border-radius);
+  margin: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 800px; /* 최대 너비 설정 */
+  margin: 20px auto; /* 중앙 정렬 */
+  max-height: 80vh; /* 최대 높이 설정 */
+  overflow-y: auto; /* 세로 스크롤바 추가 */
+}
+
+.about-container h1 {
+  font-size: 28px;
+  color: var(--accent-color);
+  margin-bottom: 20px;
+}
+
+.about-container section {
+  margin-bottom: 20px;
+}
+
+.about-container section h2 {
+  font-size: 24px;
+  color: var(--accent-color);
+  margin-bottom: 10px;
+}
+
+.about-container section p {
+  font-size: 18px;
+  color: var(--secondary-text);
+  line-height: 1.6;
+}
+
+/* 스크롤바 스타일 */
+.about-container::-webkit-scrollbar {
+  width: 12px; /* 스크롤바 너비 */
+}
+
+.about-container::-webkit-scrollbar-track {
+  background: var(--primary-bg); /* 스크롤바 트랙 색상 */
+  border-radius: 10px; /* 스크롤바 트랙 둥근 모서리 */
+}
+
+.about-container::-webkit-scrollbar-thumb {
+  background-color: var(--secondary-bg); /* 스크롤바 색상 */
+  border-radius: 10px; /* 스크롤바 둥근 모서리 */
+  border: 3px solid var(--primary-bg); /* 스크롤바와 트랙 사이 간격 */
+}
+
+.about-container::-webkit-scrollbar-thumb:hover {
+  background-color: var(--accent-color); /* 스크롤바 호버 색상 */
+}
