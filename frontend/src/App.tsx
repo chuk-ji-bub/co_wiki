@@ -10,6 +10,7 @@ import LeftBox from './components/left/left';
 import MiddleBox from './components/middle/middle';
 import RightBox from './components/right/right';
 import Header from './components/Header/Header';
+import About from './pages/about/about'
 
 
 interface Term {
@@ -26,24 +27,25 @@ const App: React.FC = () => {
   };
 
   return (
-    <Router>
-      <Header />
-      <Routes>
-        <Route path="/" element={<Main />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/root" element={<Root />} />
-        <Route path="/test" element={<Test />} />
-        <Route path="/userpage" element={<Userpage />} />
-        <Route path="/main" element={
-          <div className="main-container">
-            <LeftBox onTermClick={handleTermClick} />
-            <MiddleBox term={selectedTerm} />
-            <RightBox />
-          </div>
-        } />
-      </Routes>
-    </Router>
+      <Router>
+        <Header />
+          <Routes>
+            <Route path="/" element={<Main />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/root" element={<Root />} />
+            <Route path="/test" element={<Test />} />
+            <Route path="/userpage" element={<Userpage />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/main" element={
+              <div className="main-container">
+                <LeftBox onTermClick={handleTermClick} />
+                <MiddleBox term={selectedTerm} />
+                <RightBox />
+              </div>
+            } />
+        </Routes>
+      </Router>
   );
 };
 
