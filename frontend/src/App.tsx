@@ -26,6 +26,7 @@ const App: React.FC = () => {
     setSelectedTerm(term);
   };
 
+  
   return (
       <Router>
         <Header />
