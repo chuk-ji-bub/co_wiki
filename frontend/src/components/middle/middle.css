@@ -2,7 +2,7 @@
 
   position: absolute; /* 위치 지정 */
   bottom: 0; /* 화면 아래쪽에 붙이기 */
-  left:63%; /* 화면의 가운데로 이동 */
+  left:34%; /* 화면의 가운데로 이동 */
   transform: translateX(-50%); /* 가운데 정렬 */
 
   display: flex;
