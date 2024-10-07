@@ -3,23 +3,14 @@ import { Link } from 'react-router-dom';
 import styles from './style.module.css';
 import { FaSignInAlt, FaUserCircle, FaCaretDown } from 'react-icons/fa'; // 아이콘 추가
 
-const Header = () => {
-  const [userName, setUserName] = useState<string | null>(null);
-  const [dropdownOpen, setDropdownOpen] = useState(false); // 드롭다운 상태 추가
+interface HeaderProps {
+  isAuthenticated: boolean;
+  userName: string | null;
+  handleLogout: () => void;
+}
 
-  useEffect(() => {
-    // 예시: 로컬 스토리지에서 사용자 이름을 가져옴
-    const storedUserName = localStorage.getItem('userName');
-    if (storedUserName) {
-      setUserName(storedUserName);
-    }
-  }, []);
-
-  const handleLogout = () => {
-    // 예시: 로컬 스토리지에서 사용자 이름을 제거
-    localStorage.removeItem('userName');
-    setUserName(null);
-  };
+const Header: React.FC<HeaderProps> = ({ isAuthenticated, userName, handleLogout }) => {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -39,7 +30,7 @@ const Header = () => {
           <Link to="/contact" className={styles.navLink}>Contact</Link>
         </div>
         <div className={styles.userSection}>
-          {userName ? (
+          {isAuthenticated && userName ? (
             <>
               <div className={styles.userDropdown} onClick={toggleDropdown}>
                 <FaUserCircle className={styles.userIcon} />

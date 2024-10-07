@@ -1,52 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Main from '../src/pages/main/index';
-import Login from './pages/login/index';
-import Signup from './pages/signup/index';
+import Main from './pages/main/index';
+import Login from './pages/login/index'; 
 import Userpage from './pages/userpage/userpage';
 import Root from './pages/root/root';
-import Test from './pages/test1/test';
+
 import LeftBox from './components/left/left';
 import MiddleBox from './components/middle/middle';
 import RightBox from './components/right/right';
 import Header from './components/Header/Header';
-import About from './pages/about/about'
-
-
-interface Term {
-  kr: string;
-  en: string;
-  definition: string;
-}
+import About from './pages/about/about';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const App: React.FC = () => {
-  const [selectedTerm, setSelectedTerm] = useState<Term | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [userName, setUserName] = useState<string | null>(null);
 
-  const handleTermClick = (term: Term) => {
-    setSelectedTerm(term);
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const name = localStorage.getItem('userName');
+    if (token && name) {
+      setIsAuthenticated(true);
+      setUserName(name);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    setIsAuthenticated(false);
+    setUserName(null);
   };
 
-  
   return (
+    <GoogleOAuthProvider clientId="709327209190-g4veopnsbj84rf4nuoud57elbtlbfnsd.apps.googleusercontent.com">
       <Router>
-        <Header />
-          <Routes>
-            <Route path="/" element={<Main />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/root" element={<Root />} />
-            <Route path="/test" element={<Test />} />
-            <Route path="/userpage" element={<Userpage />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/main" element={
-              <div className="main-container">
-                <LeftBox onTermClick={handleTermClick} />
-                <MiddleBox term={selectedTerm} />
-                <RightBox />
-              </div>
-            } />
+        <Header isAuthenticated={isAuthenticated} userName={userName} handleLogout={handleLogout} />
+        <Routes>
+          <Route path="/" element={<Main />} />
+          <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} setUserName={setUserName} />} />
+          <Route path="/userpage" element={<Userpage />} />
+          <Route path="/about" element={<About />} />
         </Routes>
       </Router>
+    </GoogleOAuthProvider>
   );
 };
 

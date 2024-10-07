@@ -2,23 +2,23 @@ import React, { useState, useEffect } from 'react';
 import './left.css';
 
 interface Term {
-  kr: string;
-  en: string;
-  definition: string;
+  function_name: string;
+  usage_example: string;
+  description: string;
 }
 
 interface LeftProps {
+  selectedLanguage: string;
   onTermClick: (term: Term) => void;
 }
 
-const LeftBox: React.FC<LeftProps> = ({ onTermClick }) => {
+const LeftBox: React.FC<LeftProps> = ({ selectedLanguage, onTermClick }) => {
   const [terms, setTerms] = useState<Term[]>([]);
-  const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
     const fetchTerms = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/dictionary');
+        const response = await fetch(`http://localhost:5000/api/functions?language=${selectedLanguage}`);
         const data = await response.json();
         setTerms(data);
       } catch (error) {
@@ -26,35 +26,18 @@ const LeftBox: React.FC<LeftProps> = ({ onTermClick }) => {
       }
     };
 
-    fetchTerms();
-  }, []);
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const filteredTerms = terms.filter(term =>
-    term.kr.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    term.en.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    if (selectedLanguage) {
+      fetchTerms();
+    }
+  }, [selectedLanguage]);
 
   return (
-    <div className="editor-container1">
-      <input
-        type="text"
-        placeholder="Search..."
-        value={searchTerm}
-        onChange={handleSearchChange}
-        className="search-input"
-      />
+    <div className="left-container">
+      <h2>{selectedLanguage} Functions</h2>
       <div className="term-list">
-        {filteredTerms.map((term, index) => (
-          <div
-            key={index}
-            className="term"
-            onClick={() => onTermClick(term)}
-          >
-            {term.kr} / {term.en}
+        {terms.map((term, index) => (
+          <div key={index} className="term" onClick={() => onTermClick(term)}>
+            {term.function_name}
           </div>
         ))}
       </div>
