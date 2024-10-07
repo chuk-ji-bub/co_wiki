@@ -29,5 +29,15 @@ CREATE TABLE login (
     role VARCHAR(50) NOT NULL DEFAULT '학생' -- 역할 (기본값: '학생', 관리자가 변경 가능)
 ) CHARSET=utf8;
 
+USE co_wiki;
+
+
+CREATE TABLE programming_concepts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    language VARCHAR(50),  
+    function_name VARCHAR(100),  
+    usage_example TEXT,  
+    description TEXT  
+);
 
 

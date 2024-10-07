@@ -86,7 +86,6 @@ const Userpage: React.FC = () => {
 
   return (
     <div>
-      <Header />
       <div className="userpage-container">
         <div className="profile-section">
           <div className="profile-image-container">

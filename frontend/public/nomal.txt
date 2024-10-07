@@ -1,0 +1,24 @@
+1. React 및 Google OAuth 관련 라이브러리
+
+
+npm install react react-dom react-router-dom
+npm install @react-oauth/google
+
+2. 스타일 및 아이콘 관련 라이브러리
+
+
+npm install react-icons
+
+3. 백엔드 API와 통신하는 라이브러리
+
+
+npm install axios
+
+4. 상태 관리 라이브러리 (선택사항)
+
+
+npm install zustand
+
+5. 타입스크립트 사용 시 필요한 라이브러리 (선택사항)
+
+npm install typescript @types/react @types/react-dom @types/react-router-dom

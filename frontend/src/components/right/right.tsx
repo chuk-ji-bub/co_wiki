@@ -1,62 +1,59 @@
-// 메인페이지에 오른쪽에 둘 북마크 같은거
-
-// right.tsx
-
 import React, { useState } from 'react';
-import './right.css'; // 스타일링 파일 (CSS 모듈 등을 사용)
+import './right.css';
 
-const MyEditor: React.FC = () => {
-  const [expanded, setExpanded] = useState(false);
-  const [bookmarks, setBookmarks] = useState<string[]>([]);
+const Chatbot: React.FC = () => {
+  const [messages, setMessages] = useState<{sender: string, text: string}[]>([]);
+  const [userInput, setUserInput] = useState('');
 
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
+  const handleUserInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUserInput(e.target.value);
   };
 
-  const handleSaveClick = () => {
-    // 저장 로직 구현
-    console.log('저장되었습니다.');
+  const handleSendMessage = async () => {
+    if (!userInput.trim()) return;
+
+    const newMessages = [...messages, { sender: 'user', text: userInput }];
+    setMessages(newMessages);
+    setUserInput('');
+
+    try {
+      const response = await fetch('http://localhost:5000/api/chatbot', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: userInput }),
+      });
+      const data = await response.json();
+
+      setMessages([...newMessages, { sender: 'bot', text: data.reply }]);
+    } catch (error) {
+      console.error('Error:', error);
+      setMessages([...newMessages, { sender: 'bot', text: 'Error in chatbot response.' }]);
+    }
   };
 
   return (
-    <div className="editor-container3">
-      <div className="text-panel3">
-        <div className={`text-content3 ${expanded ? 'expanded' : ''}`}>
-          {/* 텍스트 내용 */}
-          {/* 여러 줄의 텍스트를 표시 */}
-          {/* 예시: */}
-          <p>JavaScript (JS)는 간단하고, 멀티 패러다임을 지원하는...</p>
-        </div>
-        <button className="expand-button3" onClick={handleExpandClick}>
-          {expanded ? '접기' : '펼치기'}
-        </button>
+    <div className="chatbot-container">
+      <div className="chatbox">
+        {messages.map((message, index) => (
+          <div key={index} className={message.sender === 'user' ? 'user-message' : 'bot-message'}>
+            {message.text}
+          </div>
+        ))}
       </div>
-      <div className="bookmarks-panel3">
-        <h3>바로가기</h3>
-        <ol>
-          {bookmarks.map((bookmark, index) => (
-            <li key={index}>{bookmark}</li>
-          ))}
-        </ol>
+      <div className="chat-input-container">
+        <input
+          type="text"
+          value={userInput}
+          onChange={handleUserInputChange}
+          placeholder="Ask a question..."
+          className="chat-input"
+        />
+        <button onClick={handleSendMessage} className="send-button">Send</button>
       </div>
-      <div className="bookmarks-panel3">
-        <h3>북마크</h3>
-        <ol>
-          {/* 북마크 목록 */}
-          {/* 예시: */}
-          <li>React 공식 문서</li>
-          <li>TypeScript 학습 자료</li>
-        </ol>
-      </div>
-      <button className="save-button3" onClick={handleSaveClick}>
-        저장
-      </button>
     </div>
   );
 };
 
-export default MyEditor;
-
-
-
-
+export default Chatbot;
