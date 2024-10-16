@@ -40,6 +40,7 @@ const App: React.FC = () => {
           <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} setUserName={setUserName} />} />
           <Route path="/userpage" element={<Userpage />} />
           <Route path="/about" element={<About />} />
+          <Route path="/root" element={<Root />} />
         </Routes>
       </Router>
     </GoogleOAuthProvider>

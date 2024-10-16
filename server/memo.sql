@@ -1,0 +1,11 @@
+CREATE TABLE chat_records (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sender VARCHAR(50),
+    message TEXT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE notes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    content TEXT
+);
