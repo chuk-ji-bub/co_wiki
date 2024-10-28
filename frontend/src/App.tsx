@@ -4,10 +4,6 @@ import Main from './pages/main/index';
 import Login from './pages/login/index'; 
 import Userpage from './pages/userpage/userpage';
 import Root from './pages/root/root';
-
-import LeftBox from './components/left/left';
-import MiddleBox from './components/middle/middle';
-import RightBox from './components/right/right';
 import Header from './components/Header/Header';
 import About from './pages/about/about';
 import { GoogleOAuthProvider } from '@react-oauth/google';
@@ -26,18 +22,37 @@ const App: React.FC = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.clear();
-    setIsAuthenticated(false);
-    setUserName(null);
+    localStorage.clear(); // 로컬 스토리지 초기화
+    setIsAuthenticated(false); // 인증 상태 false로 설정
+    setUserName(null); // 유저 이름 초기화
   };
 
+  // 환경 변수에서 클라이언트 ID 가져오기
+  const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+  if (!clientId) {
+    console.error('Google Client ID가 설정되지 않았습니다.');
+    return <div>Google Client ID가 필요합니다.</div>;
+  }
+
   return (
-    <GoogleOAuthProvider clientId="709327209190-g4veopnsbj84rf4nuoud57elbtlbfnsd.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId={clientId}>
       <Router>
-        <Header isAuthenticated={isAuthenticated} userName={userName} handleLogout={handleLogout} />
+        <Header 
+          isAuthenticated={isAuthenticated} 
+          userName={userName} 
+          handleLogout={handleLogout} 
+        />
         <Routes>
           <Route path="/" element={<Main />} />
-          <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} setUserName={setUserName} />} />
+          <Route 
+            path="/login" 
+            element={
+              <Login 
+                setIsAuthenticated={setIsAuthenticated} 
+                setUserName={setUserName} 
+              />
+            } 
+          />
           <Route path="/userpage" element={<Userpage />} />
           <Route path="/about" element={<About />} />
           <Route path="/root" element={<Root />} />

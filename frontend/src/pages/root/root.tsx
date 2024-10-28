@@ -1,119 +1,75 @@
 import React, { useState, useEffect } from 'react';
+import DBSearch from '../../components/DBSearch/DBSearch';
+import DBTable from '../../components/DBTable/DBTable';
+import DBForm from '../../components/DBForm/DBForm';      
 import './root.css';
 
-interface Term {
+interface Concept {
   id: number;
-  kr: string;
-  en: string;
-  definition: string;
+  language: string;
+  function_name: string;
+  usage_example: string;
+  description: string;
 }
 
 const Root: React.FC = () => {
-  const [terms, setTerms] = useState<Term[]>([]);
-  const [newTerm, setNewTerm] = useState<{ kr: string; en: string; definition: string }>({ kr: '', en: '', definition: '' });
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [concepts, setConcepts] = useState<Concept[]>([]);
+  const [filteredConcepts, setFilteredConcepts] = useState<Concept[]>([]);
+  const [selectedLanguage, setSelectedLanguage] = useState<string>('Python');
 
+  // 초기 데이터 가져오기
   useEffect(() => {
-    const fetchTerms = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/api/dictionary');
-        const data = await response.json();
-        setTerms(data);
-      } catch (error) {
-        console.error('Error fetching terms:', error);
-      }
-    };
+    fetchConcepts();
+  }, [selectedLanguage]);
 
-    fetchTerms();
-  }, []);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setNewTerm({ ...newTerm, [name]: value });
-  };
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const handleAddTerm = async () => {
+  const fetchConcepts = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/dictionary', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newTerm),
-      });
+      const response = await fetch(`http://localhost:5000/api/functions?language=${selectedLanguage}`);
       const data = await response.json();
-      setTerms([...terms, data]);
-      setNewTerm({ kr: '', en: '', definition: '' });
+      setConcepts(data);
     } catch (error) {
-      console.error('Error adding term:', error);
+      console.error('Error fetching concepts:', error);
     }
   };
 
-  const handleDeleteTerm = async (id: number) => {
+  // 검색 핸들러
+  const handleSearch = (query: string) => {
+    const results = concepts.filter((concept) =>
+      concept.function_name.toLowerCase().includes(query.toLowerCase()) ||
+      concept.description.toLowerCase().includes(query.toLowerCase())
+    );
+    setFilteredConcepts(results);
+  };
+
+  // 삭제 핸들러
+  const handleDelete = async (id: number) => {
     try {
-      await fetch(`http://localhost:5000/api/dictionary/${id}`, {
-        method: 'DELETE',
-      });
-      setTerms(terms.filter(term => term.id !== id));
+      await fetch(`http://localhost:5000/api/functions/${id}`, { method: 'DELETE' });
+      setConcepts(concepts.filter((concept) => concept.id !== id));
     } catch (error) {
-      console.error('Error deleting term:', error);
+      console.error('Error deleting concept:', error);
     }
   };
 
-  const filteredTerms = terms.filter(term =>
-    term.kr.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    term.en.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    term.definition.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // 추가 핸들러
+  const handleAdd = (newConcept: Concept) => {
+    setConcepts([...concepts, newConcept]);
+  };
 
   return (
     <div className="root-container">
-      <h1>Dictionary Management</h1>
-      <input
-        type="text"
-        placeholder="Search..."
-        value={searchTerm}
-        onChange={handleSearchChange}
-        className="search-input"
+      <h1>Manage Programming Concepts</h1>
+      <div className="language-selector">
+        <button onClick={() => setSelectedLanguage('Python')}>Python</button>
+        <button onClick={() => setSelectedLanguage('JavaScript')}>JavaScript</button>
+        <button onClick={() => setSelectedLanguage('Java')}>Java</button>
+      </div>
+      <DBSearch onSearch={handleSearch} />
+      <DBForm onAdd={handleAdd} />
+      <DBTable 
+        concepts={filteredConcepts.length > 0 ? filteredConcepts : concepts} 
+        onDelete={handleDelete} 
       />
-      <div className="add-term">
-        <h2>Add New Term</h2>
-        <input
-          type="text"
-          name="kr"
-          value={newTerm.kr}
-          onChange={handleInputChange}
-          placeholder="Korean term"
-        />
-        <input
-          type="text"
-          name="en"
-          value={newTerm.en}
-          onChange={handleInputChange}
-          placeholder="English term"
-        />
-        <textarea
-          name="definition"
-          value={newTerm.definition}
-          onChange={handleInputChange}
-          placeholder="Definition"
-        />
-        <button onClick={handleAddTerm}>Add Term</button>
-      </div>
-      <div className="term-list">
-        {filteredTerms.map((term) => (
-          <div key={term.id} className="term-item">
-            <p><strong>KR:</strong> {term.kr}</p>
-            <p><strong>EN:</strong> {term.en}</p>
-            <p><strong>Definition:</strong> {term.definition}</p>
-            <button onClick={() => handleDeleteTerm(term.id)}>Delete</button>
-          </div>
-        ))}
-      </div>
     </div>
   );
 };
