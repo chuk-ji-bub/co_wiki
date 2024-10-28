@@ -1,12 +1,3 @@
-USE co_wiki;
-
-
-CREATE TABLE dictionary (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    kr VARCHAR(255) NOT NULL,         -- 함수의 한국어 명칭
-    en VARCHAR(255) NOT NULL,         -- 함수의 영어 명칭
-    definition TEXT NOT NULL          -- 함수의 정의 및 설명
-) CHARSET=utf8;
 
 USE co_wiki;
 

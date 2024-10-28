@@ -1,18 +1,20 @@
+// index.tsx
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
+// .env 파일에서 클라이언트 ID 가져오기
+const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID as string;
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
 root.render(
   <React.StrictMode>
-    <App />
+    <GoogleOAuthProvider clientId={clientId}>
+      <App />
+    </GoogleOAuthProvider>
   </React.StrictMode>
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-
