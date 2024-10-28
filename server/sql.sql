@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 USE co_wiki;
 
 drop table login;
@@ -16,6 +17,8 @@ CREATE TABLE dictionary (
     term VARCHAR(255) NOT NULL,
     definition TEXT NOT NULL
 ) CHARSET=utf8;
+=======
+>>>>>>> Stashed changes
 
 ALTER TABLE dictionary
 DROP COLUMN term,
