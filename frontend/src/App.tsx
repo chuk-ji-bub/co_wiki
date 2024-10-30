@@ -8,9 +8,14 @@ import Header from './components/Header/Header';
 import About from './pages/about/about';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
+
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [userName, setUserName] = useState<string | null>(null);
+
+
+  // console.log("Google Client ID:", process.env.REACT_APP_GOOGLE_CLIENT_ID);
+
 
   useEffect(() => {
     const token = localStorage.getItem('token');
