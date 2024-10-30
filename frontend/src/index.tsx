@@ -1,11 +1,9 @@
-// index.tsx
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { GoogleOAuthProvider } from '@react-oauth/google';
 
-// .env 파일에서 클라이언트 ID 가져오기
-const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID as string;
+// 디버깅용 클라이언트 ID 확인
+// console.log("Google Client ID:", process.env.REACT_APP_GOOGLE_CLIENT_ID);
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -13,8 +11,6 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <GoogleOAuthProvider clientId={clientId}>
-      <App />
-    </GoogleOAuthProvider>
+    <App />
   </React.StrictMode>
 );
