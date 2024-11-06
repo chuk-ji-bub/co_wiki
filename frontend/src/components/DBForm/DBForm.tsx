@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './DBForm.css';
 
 interface Concept {
@@ -11,30 +11,53 @@ interface Concept {
 
 interface DBFormProps {
   onAdd: (newConcept: Concept) => void;
+  onUpdate: (updatedConcept: Concept) => void;
+  editConcept: Concept | null;
+  setEditConcept: (concept: Concept | null) => void;
   languages: string[];
 }
 
-const DBForm: React.FC<DBFormProps> = ({ onAdd, languages }) => {
-  const [newConcept, setNewConcept] = useState<Concept>({
+const DBForm: React.FC<DBFormProps> = ({ onAdd, onUpdate, editConcept, setEditConcept, languages }) => {
+  const [conceptData, setConceptData] = useState<Concept>({
     language: '',
     function_name: '',
     usage_example: '',
     description: '',
   });
 
+  // editConcept이 변경될 때마다 폼 데이터를 설정
+  useEffect(() => {
+    if (editConcept) {
+      setConceptData(editConcept);
+    } else {
+      setConceptData({ language: '', function_name: '', usage_example: '', description: '' });
+    }
+  }, [editConcept]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setNewConcept({ ...newConcept, [name]: value });
+    setConceptData({ ...conceptData, [name]: value });
   };
 
-  const handleSubmit = async () => {
-    onAdd(newConcept);  // `newConcept`에 `id` 필드 없이 전달
-    setNewConcept({ language: '', function_name: '', usage_example: '', description: '' });
+  const handleSubmit = () => {
+    if (conceptData.id) {
+      // 수정 모드
+      onUpdate(conceptData);
+    } else {
+      // 추가 모드
+      onAdd(conceptData);
+    }
+    resetForm();
+  };
+
+  const resetForm = () => {
+    setConceptData({ language: '', function_name: '', usage_example: '', description: '' });
+    setEditConcept(null); // 수정 모드 해제
   };
 
   return (
     <div className="db-form">
-      <select name="language" onChange={handleChange} value={newConcept.language} className="form-select">
+      <select name="language" onChange={handleChange} value={conceptData.language} className="form-select">
         <option value="">Select Language</option>
         {languages.map((lang) => (
           <option key={lang} value={lang}>
@@ -46,21 +69,24 @@ const DBForm: React.FC<DBFormProps> = ({ onAdd, languages }) => {
         name="function_name" 
         placeholder="Function Name" 
         onChange={handleChange} 
-        value={newConcept.function_name} 
+        value={conceptData.function_name} 
       />
       <textarea 
         name="usage_example" 
         placeholder="Usage Example" 
         onChange={handleChange} 
-        value={newConcept.usage_example} 
+        value={conceptData.usage_example} 
       />
       <textarea 
         name="description" 
         placeholder="Description" 
         onChange={handleChange} 
-        value={newConcept.description} 
+        value={conceptData.description} 
       />
-      <button onClick={handleSubmit}>Add Concept</button>
+      <button onClick={handleSubmit}>
+        {conceptData.id ? 'Update Concept' : 'Add Concept'}
+      </button>
+      {conceptData.id && <button onClick={resetForm} className="cancel-btn">Cancel</button>}
     </div>
   );
 };

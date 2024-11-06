@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 # .env 파일 로드 및 환경 변수 가져오기
 load_dotenv()
 
+# 환경 변수 가져오기
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
@@ -18,7 +19,7 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 if not (GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET and OPENAI_API_KEY):
     raise ValueError("환경 변수가 올바르게 설정되지 않았습니다.")
 
-# Flask 앱 초기화
+# Flask 앱 초기화 및 설정
 app = Flask(__name__)
 app.secret_key = os.urandom(24)  
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
@@ -42,7 +43,7 @@ google = oauth.register(
 def get_db_connection():
     return pymysql.connect(
         host='127.0.0.1', user='root', password='1234', 
-        db='co_wiki', charset='utf8'
+        db='co_wiki', charset='utf8', cursorclass=pymysql.cursors.DictCursor
     )
 
 # CORS 프리플라이트 응답
@@ -114,7 +115,7 @@ def chatbot():
 def get_functions():
     language = request.args.get('language')
     db = get_db_connection()
-    cursor = db.cursor(pymysql.cursors.DictCursor)
+    cursor = db.cursor()
 
     cursor.execute(
         "SELECT id, language, function_name, usage_example, description FROM programming_concepts WHERE language = %s",
@@ -154,7 +155,6 @@ def add_function():
         cursor.close()
         db.close()
 
-
 # 함수 삭제
 @app.route('/api/functions/<int:id>', methods=['DELETE'])
 def delete_function(id):
@@ -180,6 +180,26 @@ def update_function(id):
     cursor.close()
     db.close()
     return jsonify({"message": "Function updated successfully"})
+
+# 고유한 언어 목록 가져오기
+@app.route('/api/languages', methods=['GET'])
+def get_languages():
+    db = get_db_connection()
+    cursor = db.cursor()
+    
+    try:
+        # 고유 언어 목록 조회
+        cursor.execute("SELECT DISTINCT language FROM programming_concepts")
+        languages = [row['language'] for row in cursor.fetchall()]
+        return jsonify(languages)
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+    finally:
+        cursor.close()
+        db.close()
+
 
 # 루트 페이지 접근 제어
 @app.route('/root', methods=['GET'])
