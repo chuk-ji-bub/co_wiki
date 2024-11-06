@@ -25,8 +25,10 @@ const Login: React.FC<LoginProps> = ({ setIsAuthenticated, setUserName }) => {
         if (data.success) {
           localStorage.setItem('token', data.token); // 토큰 저장
           localStorage.setItem('userName', data.name); // 사용자 이름 저장
+          localStorage.setItem('isAdmin', data.is_admin ? 'true' : 'false'); // 관리자 여부 저장
           setUserName(data.name);  // 상태 업데이트
           setIsAuthenticated(true);  // 로그인 상태 설정
+          console.log(`[Login] isAdmin status: ${data.is_admin}`);
           navigate('/');  // 메인 페이지로 이동
         } else {
           alert('로그인 실패');
