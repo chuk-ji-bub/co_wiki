@@ -1,36 +1,35 @@
 .db-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  width: 100%;
+  max-width: 500px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
 }
 
-.db-form input, 
+.form-select,
+.db-form input,
 .db-form textarea {
-  background-color: #2c2c3e;
-  color: #e0e0e0;
-  border: 1px solid #3b3b4f;
-  border-radius: 5px;
+  width: 100%;
   padding: 10px;
-  transition: border-color 0.3s;
-}
-
-.db-form input:focus, 
-.db-form textarea:focus {
-  outline: none;
-  border-color: #007acc;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
 }
 
 .db-form button {
-  background-color: #007acc;
-  color: #fff;
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
   border: none;
   border-radius: 5px;
-  padding: 10px;
+  background-color: #28a745;
+  color: white;
   cursor: pointer;
-  transition: background-color 0.3s;
 }
 
 .db-form button:hover {
-  background-color: #005f9e;
+  background-color: #218838;
 }

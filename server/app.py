@@ -129,16 +129,31 @@ def get_functions():
 @app.route('/api/functions', methods=['POST'])
 def add_function():
     data = request.json
+
+    # 데이터 검증
+    required_fields = ['language', 'function_name', 'usage_example', 'description']
+    for field in required_fields:
+        if field not in data or not data[field]:
+            return jsonify({"error": f"{field} is required"}), 400
+
     db = get_db_connection()
     cursor = db.cursor()
-    cursor.execute(
-        "INSERT INTO programming_concepts (language, function_name, usage_example, description) VALUES (%s, %s, %s, %s)",
-        (data['language'], data['function_name'], data['usage_example'], data['description'])
-    )
-    db.commit()
-    cursor.close()
-    db.close()
-    return jsonify({"message": "Function added successfully!"})
+    try:
+        # 데이터베이스에 함수 추가
+        cursor.execute(
+            "INSERT INTO programming_concepts (language, function_name, usage_example, description) VALUES (%s, %s, %s, %s)",
+            (data['language'], data['function_name'], data['usage_example'], data['description'])
+        )
+        db.commit()
+        new_id = cursor.lastrowid  # 새로 추가된 행의 ID 가져오기
+        return jsonify({"message": "Function added successfully!", "id": new_id})
+    except Exception as e:
+        db.rollback()  # 오류가 발생하면 롤백
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        db.close()
+
 
 # 함수 삭제
 @app.route('/api/functions/<int:id>', methods=['DELETE'])

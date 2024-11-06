@@ -2,7 +2,7 @@ import React from 'react';
 import './DBTable.css';
 
 interface Concept {
-  id: number;
+  id?: number;  // 선택적 필드로 수정
   function_name: string;
   usage_example: string;
   description: string;
@@ -31,7 +31,10 @@ const DBTable: React.FC<DBTableProps> = ({ concepts, onDelete }) => {
             <td>{concept.usage_example}</td>
             <td>{concept.description}</td>
             <td>
-              <button onClick={() => onDelete(concept.id)}>Delete</button>
+              {/* concept.id가 존재하는 경우에만 onDelete 호출 */}
+              {concept.id !== undefined && (
+                <button onClick={() => onDelete(concept.id as number)}>Delete</button>
+              )}
             </td>
           </tr>
         ))}

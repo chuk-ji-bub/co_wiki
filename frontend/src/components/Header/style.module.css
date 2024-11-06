@@ -1,22 +1,26 @@
+
+/* 기본 다크 테마는 :root에서 정의됨 */
 :root {
   --primary-bg: #1e1e1e;
-  --secondary-bg: #2d2d2d;
   --primary-text: #ffffff;
-  --secondary-text: #b0b0b0;
   --accent-color: #007acc;
   --hover-color: #005a99;
-  --danger-color: #e06c75;
-  --border-radius: 5px;
-  --dropdown-bg: #3a3a3a;
-  --dropdown-hover-bg: #4b4b4b;
-  --dropdown-border: #282828;
+}
+
+/* 라이트 테마 */
+.light-theme {
+  --primary-bg: #ffffff;
+  --primary-text: #000000;
+  --accent-color: #007acc;
+  --hover-color: #005a99;
 }
 
 body {
   background-color: var(--primary-bg);
   color: var(--primary-text);
-  font-family: 'Fira Code', monospace;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
+
 
 .header {
   display: flex;
@@ -29,6 +33,7 @@ body {
   top: 0;
   z-index: 100;
 }
+
 
 .black-nav {
   display: flex;
