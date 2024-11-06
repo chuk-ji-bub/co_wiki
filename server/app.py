@@ -21,7 +21,7 @@ if not (GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET and OPENAI_API_KEY):
 
 # Flask 앱 초기화 및 설정
 app = Flask(__name__)
-app.secret_key = os.urandom(24)  
+app.secret_key = os.urandom(24)
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
 
 # OpenAI API 키 설정
@@ -46,6 +46,17 @@ def get_db_connection():
         db='co_wiki', charset='utf8', cursorclass=pymysql.cursors.DictCursor
     )
 
+# 관리자 여부 확인 함수
+def is_admin(email):
+    """데이터베이스에서 주어진 이메일이 관리자 목록에 있는지 확인"""
+    db = get_db_connection()
+    cursor = db.cursor()
+    cursor.execute("SELECT 1 FROM admin_users WHERE email = %s", (email,))
+    result = cursor.fetchone()
+    cursor.close()
+    db.close()
+    return result is not None  # 관리자 이메일이 존재하면 True 반환
+
 # CORS 프리플라이트 응답
 def _build_cors_preflight_response():
     response = jsonify({'message': 'Preflight OK'})
@@ -53,6 +64,25 @@ def _build_cors_preflight_response():
     response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
     response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
     return response
+
+# 관리자 여부 확인 함수
+def is_admin(email):
+    """데이터베이스에서 주어진 이메일이 관리자 목록에 있는지 확인"""
+    db = get_db_connection()
+    cursor = db.cursor()
+    
+    # DB 확인 시작 로그
+    print(f"[is_admin] Checking admin status for email: {email}")
+    cursor.execute("SELECT 1 FROM admin_users WHERE email = %s", (email,))
+    result = cursor.fetchone()
+    
+    # 결과 출력 로그
+    is_admin = result is not None
+    print(f"[is_admin] Admin status for {email}: {is_admin}")
+    
+    cursor.close()
+    db.close()
+    return is_admin
 
 # Google 로그인 엔드포인트
 @app.route('/api/google_login', methods=['POST', 'OPTIONS'])
@@ -74,11 +104,17 @@ def google_login():
         session['user_id'] = userid
         session['email'] = email
         session['name'] = name
+        session['is_admin'] = is_admin(email)  # DB에서 관리자 여부 확인
+
+        # 로그인 결과 출력
+        print(f"[google_login] User {name} logged in with email: {email}")
+        print(f"[google_login] Admin status: {session['is_admin']}")
 
         return jsonify({
             'success': True,
             'token': token,
             'name': name,
+            'is_admin': session['is_admin'],  # 프론트엔드로 관리자 여부 전달
             'message': f"{name}님 환영합니다!"
         })
 
@@ -87,28 +123,15 @@ def google_login():
     except Exception as e:
         return jsonify({'success': False, 'error': f"Server error: {e}"}), 500
 
-# 챗봇 엔드포인트
-@app.route('/api/chatbot', methods=['POST', 'OPTIONS'])
-def chatbot():
-    if request.method == 'OPTIONS':
-        return _build_cors_preflight_response()
 
-    try:
-        user_message = request.json.get("message", "")
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": user_message},
-            ]
-        )
-        reply = response.choices[0].message["content"].strip()
-        return jsonify({"reply": reply})
-
-    except openai.error.OpenAIError as e:
-        return jsonify({"error": f"OpenAI API 오류: {e}"}), 500
-    except Exception as e:
-        return jsonify({"error": f"서버 오류: {e}"}), 500
+# 관리자 권한 확인 데코레이터
+def admin_required(f):
+    def wrapper(*args, **kwargs):
+        if not session.get('is_admin'):
+            return jsonify({"error": "Unauthorized access"}), 403
+        return f(*args, **kwargs)
+    wrapper.__name__ = f.__name__
+    return wrapper
 
 # 프로그램 함수 가져오기
 @app.route('/api/functions', methods=['GET'])
@@ -126,8 +149,9 @@ def get_functions():
     db.close()
     return jsonify(functions)
 
-# 새로운 함수 추가
+# 새로운 함수 추가 (관리자 전용)
 @app.route('/api/functions', methods=['POST'])
+@admin_required
 def add_function():
     data = request.json
 
@@ -140,23 +164,23 @@ def add_function():
     db = get_db_connection()
     cursor = db.cursor()
     try:
-        # 데이터베이스에 함수 추가
         cursor.execute(
             "INSERT INTO programming_concepts (language, function_name, usage_example, description) VALUES (%s, %s, %s, %s)",
             (data['language'], data['function_name'], data['usage_example'], data['description'])
         )
         db.commit()
-        new_id = cursor.lastrowid  # 새로 추가된 행의 ID 가져오기
+        new_id = cursor.lastrowid
         return jsonify({"message": "Function added successfully!", "id": new_id})
     except Exception as e:
-        db.rollback()  # 오류가 발생하면 롤백
+        db.rollback()
         return jsonify({"error": str(e)}), 500
     finally:
         cursor.close()
         db.close()
 
-# 함수 삭제
+# 함수 삭제 (관리자 전용)
 @app.route('/api/functions/<int:id>', methods=['DELETE'])
+@admin_required
 def delete_function(id):
     db = get_db_connection()
     cursor = db.cursor()
@@ -166,8 +190,9 @@ def delete_function(id):
     db.close()
     return jsonify({"message": "Function deleted successfully"})
 
-# 함수 업데이트
+# 함수 업데이트 (관리자 전용)
 @app.route('/api/functions/<int:id>', methods=['PUT'])
+@admin_required
 def update_function(id):
     data = request.json
     db = get_db_connection()
@@ -188,7 +213,6 @@ def get_languages():
     cursor = db.cursor()
     
     try:
-        # 고유 언어 목록 조회
         cursor.execute("SELECT DISTINCT language FROM programming_concepts")
         languages = [row['language'] for row in cursor.fetchall()]
         return jsonify(languages)
@@ -200,12 +224,10 @@ def get_languages():
         cursor.close()
         db.close()
 
-
 # 루트 페이지 접근 제어
 @app.route('/root', methods=['GET'])
+@admin_required
 def root_page():
-    if 'email' not in session:
-        return redirect('/login')
     return jsonify({"message": f"Welcome {session.get('name', 'User')}!"})
 
 # 로그아웃

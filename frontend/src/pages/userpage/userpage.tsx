@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './userpage.css';
 
 interface ChatRecord {
@@ -8,55 +8,48 @@ interface ChatRecord {
   timestamp: string;
 }
 
-interface Note {
-  id: string;
-  content: string;
-}
-
 const UserPage: React.FC = () => {
   const [chatRecords, setChatRecords] = useState<ChatRecord[]>([]);
-  const [notes, setNotes] = useState<Note[]>([]);
-  const [newNote, setNewNote] = useState<string>('');
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // 예시: 챗봇 대화 기록 가져오기 (API 연동)
+    // localStorage에서 관리자 상태 확인
+    const adminStatus = localStorage.getItem('isAdmin') === 'true';
+    console.log(`[UserPage] localStorage isAdmin: ${adminStatus}`);
+    setIsAdmin(adminStatus);
+
+    // 챗봇 대화 기록 가져오기
     fetch('http://localhost:5000/api/chat_records')
       .then((res) => res.json())
       .then((data) => setChatRecords(data))
       .catch((error) => console.error('Error fetching chat records:', error));
-
-    // 예시: 메모 가져오기 (AWS DynamoDB 또는 로컬 저장소로부터)
-    fetch('http://localhost:5000/api/notes')
-      .then((res) => res.json())
-      .then((data) => setNotes(data))
-      .catch((error) => console.error('Error fetching notes:', error));
   }, []);
 
-  const handleNoteChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setNewNote(e.target.value);
-  };
-
-  const handleAddNote = () => {
-    const note = { id: Date.now().toString(), content: newNote };
-    setNotes([...notes, note]);
-    setNewNote('');
-
-    // 메모를 서버에 저장 (AWS DynamoDB 연동 예시)
-    fetch('http://localhost:5000/api/notes', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(note),
-    }).catch((error) => console.error('Error adding note:', error));
+  const handleNavigateToRoot = () => {
+    if (isAdmin) {
+      console.log('[UserPage] Navigating to /root - Admin access granted');
+      navigate('/root');
+    } else {
+      console.log('[UserPage] Access denied - Admin only');
+      alert('권한이 없습니다. 관리자만 접근할 수 있습니다.');
+    }
   };
 
   return (
     <div className="userpage-container">
       <h1>환영합니다!</h1>
 
-      <Link to="/dbpage" className="db-button">DB 관리 페이지로 이동</Link>
+      {/* 관리자 여부에 따라 DB 관리 페이지 링크 표시 */}
+      {isAdmin ? (
+        <Link to="/root" className="db-button">DB 관리 페이지로 이동</Link>
+      ) : (
+        <button onClick={handleNavigateToRoot} className="db-button disabled">
+          DB 관리 페이지로 이동 (권한 필요)
+        </button>
+      )}
 
+      {/* 챗봇 대화 기록 */}
       <div className="chat-records">
         <h2>챗봇 대화 기록</h2>
         {chatRecords.map((record, index) => (
@@ -66,25 +59,10 @@ const UserPage: React.FC = () => {
         ))}
       </div>
 
-      <div className="notes-section">
-        <h2>메모</h2>
-        <textarea
-          value={newNote}
-          onChange={handleNoteChange}
-          placeholder="새로운 메모를 작성하세요..."
-          className="note-input"
-        />
-        <button onClick={handleAddNote} className="add-note-button">
-          메모 추가
-        </button>
-
-        <div className="note-list">
-          {notes.map((note) => (
-            <div key={note.id} className="note">
-              {note.content}
-            </div>
-          ))}
-        </div>
+      {/* 새로운 콘텐츠 영역 */}
+      <div className="new-section">
+        <h2>새로운 콘텐츠 영역</h2>
+        <p>이곳에 새로운 기능이나 콘텐츠를 추가할 수 있습니다.</p>
       </div>
     </div>
   );
