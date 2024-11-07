@@ -1,13 +1,8 @@
-
-
-
-
-
-
 .main-container {
   display: flex;
   height: 100vh;
   width: 100%;
+  overflow: hidden;
 }
 
 .language-selector {
@@ -22,22 +17,28 @@
 }
 
 .left-container {
-  width: 20%;
   background-color: #2d2d2d;
+  overflow-y: auto;
+  max-width: 300px; /* LeftBox의 최대 너비를 설정 */
+  min-width: 200px; /* 최소 너비 */
 }
 
 .middle-container {
-  width: 60%;
   background-color: #1e1e1e;
   padding: 20px;
+  overflow-y: auto;
+  min-width: 300px; /* MiddleBox의 최소 너비 설정 */
 }
 
 .right-container {
-  width: 20%;
   background-color: #2d2d2d;
   padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
+  overflow-y: auto;
+  min-width: 250px; /* RightBox의 최소 너비 설정 */
+}
+
+.divider {
+  width: 5px;
+  background-color: #444;
+  cursor: col-resize;
 }
