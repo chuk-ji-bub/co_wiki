@@ -1,5 +1,5 @@
 .middle-container {
-  padding: 20px;
+  padding: 20px 10px 20px 20px; /* 오른쪽 패딩을 줄여서 여백을 좁게 설정 */
   background-color: #2d2d2d;
   height: 100vh;
   flex: 2;
@@ -11,6 +11,7 @@
   padding: 20px;
   border-radius: 10px;
   color: white;
+  margin-right: 0; /* 오른쪽 여백을 없애서 카드가 더 압축되게 함 */
 }
 
 .definition-card h2 {
