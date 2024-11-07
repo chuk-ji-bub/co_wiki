@@ -1,26 +1,31 @@
 .language-selector {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px;
-  }
-  
-  .language-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 8px;
-    color: white;
-    font-weight: bold;
-    font-size: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 10px;
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
-  
-  .language-icon:hover {
-    transform: scale(1.1);
-  }
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  gap: 12px; /* 각 아이콘 간의 간격 */
+  background-color: #2f2f2f; /* 배경색 예시 */
+  border-radius: 12px;
+  max-width: 80px;
+}
+
+.language-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* 그림자 추가 */
+  border: 2px solid rgba(255, 255, 255, 0.2); /* 약간의 테두리 */
+}
+
+.language-icon:hover {
+  transform: scale(1.05);
+  border-color: white; /* hover 시 테두리 강조 */
+}
