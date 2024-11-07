@@ -61,14 +61,14 @@ const Main: React.FC = () => {
 
   return (
     <div className="main-container">
-      <LanguageSelector languages={languages} onSelectLanguage={setSelectedLanguage} />
-      <div className="content">
-        {/* LeftBox는 고정된 너비로 설정 */}
+      <div className="left-wrapper">
+        <LanguageSelector languages={languages} onSelectLanguage={setSelectedLanguage} />
         <div className="left-container" style={{ width: `${fixedLeftWidth}px` }}>
           <LeftBox selectedLanguage={selectedLanguage} onTermClick={handleTermClick} />
         </div>
+      </div>
 
-        {/* MiddleBox와 RightBox만 크기 조절 가능 */}
+      <div className="content">
         <div className="middle-container" style={{ width: `${middleWidth}%` }}>
           <MiddleBox term={selectedTerm} />
         </div>
