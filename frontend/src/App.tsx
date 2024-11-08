@@ -6,6 +6,7 @@ import Userpage from './pages/userpage/userpage';
 import Root from './pages/root/root';
 import Header from './components/Header/Header';
 import About from './pages/about/about';
+import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
 
@@ -13,10 +14,6 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [userName, setUserName] = useState<string | null>(null);
-
-
-  // console.log("Google Client ID:", process.env.REACT_APP_GOOGLE_CLIENT_ID);
-
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -61,7 +58,16 @@ const App: React.FC = () => {
           />
           <Route path="/userpage" element={<Userpage />} />
           <Route path="/about" element={<About />} />
-          <Route path="/root" element={<Root />} />
+
+          {/* PrivateRoute를 사용해 로그인 상태에서만 접근 가능하도록 설정 */}
+          <Route 
+            path="/root" 
+            element={
+              <PrivateRoute isAuthenticated={isAuthenticated}>
+                <Root />
+              </PrivateRoute>
+            }
+          />
         </Routes>
       </Router>
     </GoogleOAuthProvider>

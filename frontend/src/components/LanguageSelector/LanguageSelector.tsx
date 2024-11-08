@@ -2,26 +2,21 @@ import React from 'react';
 import './LanguageSelector.css';
 
 interface LanguageSelectorProps {
+  languages: string[];
   onSelectLanguage: (language: string) => void;
 }
 
-const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onSelectLanguage }) => {
-  const languages = [
-    { code: 'Py', name: 'Python', color: '#3776AB' },
-    { code: 'JS', name: 'JavaScript', color: '#F7DF1E' },
-    { code: 'Ja', name: 'Java', color: '#5382A1' }
-  ];
-
+const LanguageSelector: React.FC<LanguageSelectorProps> = ({ languages, onSelectLanguage }) => {
   return (
     <div className="language-selector">
-      {languages.map((lang) => (
+      {languages.map((lang, index) => (
         <div
-          key={lang.code}
+          key={index}
           className="language-icon"
-          style={{ backgroundColor: lang.color }}
-          onClick={() => onSelectLanguage(lang.name)}
+          style={{ backgroundColor: '#cccccc' }} // 각 언어별 색상 지정 가능
+          onClick={() => onSelectLanguage(lang)}
         >
-          {lang.code}
+          {lang.slice(0, 2).toUpperCase()} {/* 언어 코드 표시 */}
         </div>
       ))}
     </div>
