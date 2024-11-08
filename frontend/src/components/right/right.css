@@ -17,30 +17,42 @@
   max-height: 400px;
 }
 
+/* 사용자와 챗봇 메시지 스타일 */
 .user-message, .bot-message {
   margin-bottom: 10px;
-  padding: 10px;
-  border-radius: 8px;
+  padding: 10px 15px;
+  border-radius: 18px;
   width: fit-content;
+  max-width: 70%;
+  font-size: 15px;
+  line-height: 1.4;
 }
 
+/* 사용자 메시지: 오른쪽 정렬 */
 .user-message {
   background-color: #007acc;
   color: white;
   align-self: flex-end;
+  border-bottom-right-radius: 0;
+  margin-left: auto;
 }
 
+/* 챗봇 메시지: 왼쪽 정렬 */
 .bot-message {
   background-color: #444;
   color: white;
   align-self: flex-start;
+  border-bottom-left-radius: 0;
+  margin-right: auto;
 }
 
+/* 채팅 입력창 컨테이너 */
 .chat-input-container {
   display: flex;
   align-items: center;
 }
 
+/* 입력 필드 스타일 */
 .chat-input {
   flex: 1;
   padding: 10px;
@@ -51,6 +63,7 @@
   color: white;
 }
 
+/* 전송 버튼 스타일 */
 .send-button {
   padding: 10px 20px;
   background-color: #007acc;

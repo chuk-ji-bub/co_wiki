@@ -7,6 +7,7 @@ from google.oauth2 import id_token
 from google.auth.transport import requests
 import openai
 from dotenv import load_dotenv
+from openai.error import OpenAIError, RateLimitError
 
 # .env 파일 로드 및 환경 변수 가져오기
 load_dotenv()
@@ -51,15 +52,19 @@ def is_admin(email):
     """데이터베이스에서 주어진 이메일이 관리자 목록에 있는지 확인"""
     db = get_db_connection()
     cursor = db.cursor()
+    print(f"[is_admin] Checking admin status for email: {email}")  # 로그 추가
     cursor.execute("SELECT 1 FROM admin_users WHERE email = %s", (email,))
     result = cursor.fetchone()
     cursor.close()
     db.close()
-    return result is not None  # 관리자 이메일이 존재하면 True 반환
+    is_admin_status = result is not None
+    print(f"[is_admin] Admin status for {email}: {is_admin_status}")  # 결과 로그
+    return is_admin_status
 
 # CORS 프리플라이트 응답
 def _build_cors_preflight_response():
     response = jsonify({'message': 'Preflight OK'})
+    response.status_code = 200
     response.headers.add("Access-Control-Allow-Origin", "*")
     response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
     response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
@@ -223,6 +228,47 @@ def get_languages():
     finally:
         cursor.close()
         db.close()
+
+
+# 챗봇 엔드포인트
+@app.route('/api/chatbot', methods=['POST', 'OPTIONS'])
+def chatbot():
+    if request.method == 'OPTIONS':
+        return _build_cors_preflight_response()
+
+    try:
+        user_message = request.json.get("message", "")
+        print(f"[chatbot] Received message: {user_message}")
+
+        # OpenAI ChatCompletion을 사용하여 GPT-3.5 모델에 메시지 전달
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": user_message},
+            ]
+        )
+
+        reply = response.choices[0].message["content"].strip()
+        print(f"[chatbot] AI response: {reply}")
+
+        return jsonify({"reply": reply})
+
+    # OpenAI API 사용량 초과 예외 처리
+    except RateLimitError as e:
+        print(f"[chatbot] OpenAI API Rate Limit Error: {e}")
+        return jsonify({"error": "OpenAI API 할당량을 초과했습니다. 계정 사용량을 확인하세요."}), 429
+
+    # 기타 OpenAI API 에러 처리
+    except OpenAIError as e:
+        print(f"[chatbot] OpenAI API Error: {e}")
+        return jsonify({"error": f"OpenAI API 오류: {e}"}), 500
+
+    # 일반적인 서버 오류 처리
+    except Exception as e:
+        print(f"[chatbot] Server Error: {e}")
+        return jsonify({"error": f"서버 오류: {e}"}), 500
+
 
 # 루트 페이지 접근 제어
 @app.route('/root', methods=['GET'])

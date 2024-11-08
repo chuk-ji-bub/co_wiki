@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './right.css'; // 스타일 파일
+import './right.css';
 
 const Chatbot: React.FC = () => {
   const [messages, setMessages] = useState<{ sender: string; text: string }[]>([]);
@@ -12,12 +12,10 @@ const Chatbot: React.FC = () => {
   const handleSendMessage = async () => {
     if (!userInput.trim()) return;
 
-    // 사용자의 메시지를 추가
     const newMessages = [...messages, { sender: 'user', text: userInput }];
     setMessages(newMessages);
     setUserInput('');
 
-    // AI 챗봇 API에 사용자 입력 전달 및 응답 받기
     try {
       const response = await fetch('http://localhost:5000/api/chatbot', {
         method: 'POST',
@@ -26,13 +24,23 @@ const Chatbot: React.FC = () => {
         },
         body: JSON.stringify({ message: userInput }),
       });
-      const data = await response.json();
 
-      // 챗봇의 응답을 추가
+      if (response.status === 429) {
+        setMessages([
+          ...newMessages,
+          { sender: 'bot', text: 'API 사용량이 초과되었습니다. 나중에 다시 시도해 주세요.' },
+        ]);
+        return;
+      }
+
+      const data = await response.json();
       setMessages([...newMessages, { sender: 'bot', text: data.reply }]);
     } catch (error) {
       console.error('Error:', error);
-      setMessages([...newMessages, { sender: 'bot', text: '챗봇 응답에 문제가 발생했습니다.' }]);
+      setMessages([
+        ...newMessages,
+        { sender: 'bot', text: '챗봇 응답에 문제가 발생했습니다.' },
+      ]);
     }
   };
 
