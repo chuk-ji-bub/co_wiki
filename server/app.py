@@ -229,46 +229,39 @@ def get_languages():
         cursor.close()
         db.close()
 
-#챗봇 엔드포인트
+# 챗봇 엔드포인트
 @app.route('/api/chatbot', methods=['POST', 'OPTIONS'])
 def chatbot():
     if request.method == 'OPTIONS':
-        return _build_cors_preflight_response()
+        return jsonify({'message': 'Preflight OK'}), 200
+
+    user_message = request.json.get("message", "")
+    keyword = user_message.lower().split()[0]  # 첫 단어를 키워드로 사용
+    additional_info = ""
+
+    db = get_db_connection()
+    cursor = db.cursor()
+    cursor.execute(
+        "SELECT function_name, usage_example, description FROM programming_concepts WHERE function_name = %s", (keyword,)
+    )
+    result = cursor.fetchone()
+    cursor.close()
+    db.close()
+
+    if result:
+        additional_info = (
+            f"{result['function_name']} 함수 예제: {result['usage_example']}\n"
+            f"{result['description']}\n"
+        )
+
+    prompt = (
+        "너는 프로그래밍 정보가 포함된 도움이 되는 한국어 어시스턴트야.\n"
+        f"사용자 질문: {user_message}\n"
+        f"추가 정보: {additional_info}\n"
+        "위 질문에 대한 답변을 한국어로 상세히 제공해줘."
+    )
 
     try:
-        user_message = request.json.get("message", "")
-        print(f"[chatbot] Received message: {user_message}")
-
-        # DB에서 찾은 정보를 OpenAI 프롬프트에 추가
-        keyword = user_message.lower().split()[0]  # 예시로 첫 단어를 키워드로 사용
-        db = get_db_connection()
-        cursor = db.cursor()
-        cursor.execute(
-            """
-            SELECT function_name, usage_example, description
-            FROM programming_concepts
-            WHERE function_name = %s
-            """, (keyword,)
-        )
-        result = cursor.fetchone()
-        cursor.close()
-        db.close()
-
-        additional_info = ""
-        if result:
-            additional_info = (
-                f"{result['function_name']} 함수 예제: {result['usage_example']}\n"
-                f"{result['description']}\n"
-            )
-
-        # 한국어로 답변하도록 지시
-        prompt = (
-            "너는 프로그래밍 정보가 포함된 도움이 되는 한국어 어시스턴트야.\n"
-            f"사용자 질문: {user_message}\n"
-            f"추가 정보: {additional_info}\n"
-            "위 질문에 대한 답변을 한국어로 상세히 제공해줘."
-        )
-
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
@@ -276,24 +269,11 @@ def chatbot():
                 {"role": "user", "content": prompt},
             ]
         )
-
         reply = response.choices[0].message["content"].strip()
-        print(f"[chatbot] AI response: {reply}")
+        return jsonify({"reply": reply, "function_info": result})  # 추가된 함수 정보를 포함해 반환
 
-        return jsonify({"reply": reply})
-
-    except RateLimitError as e:
-        print(f"[chatbot] OpenAI API Rate Limit Error: {e}")
-        return jsonify({"error": "OpenAI API 할당량을 초과했습니다. 계정 사용량을 확인하세요."}), 429
-
-    except OpenAIError as e:
-        print(f"[chatbot] OpenAI API Error: {e}")
-        return jsonify({"error": f"OpenAI API 오류: {e}"}), 500
-
-    except Exception as e:
-        print(f"[chatbot] Server Error: {e}")
-        return jsonify({"error": f"서버 오류: {e}"}), 500
-
+    except RateLimitError:
+        return jsonify({"error": "API 사용량이 초과되었습니다."}), 429
 
 
 # 특정 함수 정보를 DB에서 검색하여 가져오는 엔드포인트
