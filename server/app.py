@@ -299,27 +299,23 @@ def chatbot():
 # 특정 함수 정보를 DB에서 검색하여 가져오는 엔드포인트
 @app.route('/api/function_info', methods=['GET'])
 def get_function_info():
-    keyword = request.args.get('keyword')
+    function_name = request.args.get('function_name')
     db = get_db_connection()
     cursor = db.cursor()
-
-    # keyword에 해당하는 함수 정보를 검색
-    query = """
-    SELECT function_name, usage_example, description
-    FROM programming_concepts
-    WHERE function_name = %s
-    """
-    cursor.execute(query, (keyword,))
-    result = cursor.fetchone()
+    
+    cursor.execute(
+        "SELECT function_name, usage_example, description FROM programming_concepts WHERE function_name = %s",
+        (function_name,)
+    )
+    function_info = cursor.fetchone()
     cursor.close()
     db.close()
 
-    # 결과가 없는 경우 빈 객체를 반환
-    if result:
-        return jsonify(result)
+    if function_info:
+        return jsonify(function_info)
     else:
-        return jsonify({"error": "No information found for the specified function."}), 404
-
+        return jsonify({"error": "Function not found"}), 404
+    
 
 # 루트 페이지 접근 제어
 @app.route('/root', methods=['GET'])
