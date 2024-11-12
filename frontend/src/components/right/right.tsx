@@ -1,9 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './right.css';
 
-const Chatbot: React.FC = () => {
-  const [messages, setMessages] = useState<{ sender: string; text: string }[]>([]);
+interface Term {
+  function_name: string;
+  usage_example: string;
+  description: string;
+}
+
+interface ChatbotProps {
+  explanationRequest: Term | null;
+}
+
+const Chatbot: React.FC<ChatbotProps> = ({ explanationRequest }) => {
+  const [messages, setMessages] = useState<{ sender: string; text: string }[]>([
+    { sender: 'bot', text: '안녕하세요! 무엇을 도와드릴까요?' }
+  ]);
   const [userInput, setUserInput] = useState('');
+
+  // explanationRequest가 변경될 때마다 추가 설명 요청
+  useEffect(() => {
+    if (explanationRequest) {
+      requestExplanationFromAI(explanationRequest);
+    }
+  }, [explanationRequest]);
+
+  const requestExplanationFromAI = async (term: Term) => {
+    try {
+      const prompt = `
+        다음은 프로그래밍 함수에 대한 정보입니다:
+        함수 이름: ${term.function_name}
+        예제: ${term.usage_example}
+        설명: ${term.description}
+        
+        이 함수에 대한 추가적인 설명을 한국어로 자세히 제공해 주세요.
+      `;
+
+      const response = await fetch('http://localhost:5000/api/chatbot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: prompt }),
+      });
+
+      const data = await response.json();
+      setMessages((prev) => [
+        ...prev,
+        { sender: 'bot', text: data.reply }
+      ]);
+    } catch (error) {
+      console.error('Error:', error);
+      setMessages((prev) => [
+        ...prev,
+        { sender: 'bot', text: '설명을 가져오는 데 문제가 발생했습니다.' },
+      ]);
+    }
+  };
 
   const handleUserInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUserInput(e.target.value);
@@ -19,20 +69,9 @@ const Chatbot: React.FC = () => {
     try {
       const response = await fetch('http://localhost:5000/api/chatbot', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: userInput }),
       });
-
-      if (response.status === 429) {
-        setMessages([
-          ...newMessages,
-          { sender: 'bot', text: 'API 사용량이 초과되었습니다. 나중에 다시 시도해 주세요.' },
-        ]);
-        return;
-      }
-
       const data = await response.json();
       setMessages([...newMessages, { sender: 'bot', text: data.reply }]);
     } catch (error) {

@@ -229,46 +229,73 @@ def get_languages():
         cursor.close()
         db.close()
 
-
 # 챗봇 엔드포인트
 @app.route('/api/chatbot', methods=['POST', 'OPTIONS'])
 def chatbot():
     if request.method == 'OPTIONS':
-        return _build_cors_preflight_response()
+        return jsonify({'message': 'Preflight OK'}), 200
+
+    user_message = request.json.get("message", "")
+    keyword = user_message.lower().split()[0]  # 첫 단어를 키워드로 사용
+    additional_info = ""
+
+    db = get_db_connection()
+    cursor = db.cursor()
+    cursor.execute(
+        "SELECT function_name, usage_example, description FROM programming_concepts WHERE function_name = %s", (keyword,)
+    )
+    result = cursor.fetchone()
+    cursor.close()
+    db.close()
+
+    if result:
+        additional_info = (
+            f"{result['function_name']} 함수 예제: {result['usage_example']}\n"
+            f"{result['description']}\n"
+        )
+
+    prompt = (
+        "너는 프로그래밍 정보가 포함된 도움이 되는 한국어 어시스턴트야.\n"
+        f"사용자 질문: {user_message}\n"
+        f"추가 정보: {additional_info}\n"
+        "위 질문에 대한 답변을 한국어로 상세히 제공해줘."
+    )
 
     try:
-        user_message = request.json.get("message", "")
-        print(f"[chatbot] Received message: {user_message}")
-
-        # OpenAI ChatCompletion을 사용하여 GPT-3.5 모델에 메시지 전달
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": user_message},
+                {"role": "user", "content": prompt},
             ]
         )
-
         reply = response.choices[0].message["content"].strip()
-        print(f"[chatbot] AI response: {reply}")
+        return jsonify({"reply": reply, "function_info": result})  # 추가된 함수 정보를 포함해 반환
 
-        return jsonify({"reply": reply})
+    except RateLimitError:
+        return jsonify({"error": "API 사용량이 초과되었습니다."}), 429
 
-    # OpenAI API 사용량 초과 예외 처리
-    except RateLimitError as e:
-        print(f"[chatbot] OpenAI API Rate Limit Error: {e}")
-        return jsonify({"error": "OpenAI API 할당량을 초과했습니다. 계정 사용량을 확인하세요."}), 429
 
-    # 기타 OpenAI API 에러 처리
-    except OpenAIError as e:
-        print(f"[chatbot] OpenAI API Error: {e}")
-        return jsonify({"error": f"OpenAI API 오류: {e}"}), 500
+# 특정 함수 정보를 DB에서 검색하여 가져오는 엔드포인트
+@app.route('/api/function_info', methods=['GET'])
+def get_function_info():
+    function_name = request.args.get('function_name')
+    db = get_db_connection()
+    cursor = db.cursor()
+    
+    cursor.execute(
+        "SELECT function_name, usage_example, description FROM programming_concepts WHERE function_name = %s",
+        (function_name,)
+    )
+    function_info = cursor.fetchone()
+    cursor.close()
+    db.close()
 
-    # 일반적인 서버 오류 처리
-    except Exception as e:
-        print(f"[chatbot] Server Error: {e}")
-        return jsonify({"error": f"서버 오류: {e}"}), 500
-
+    if function_info:
+        return jsonify(function_info)
+    else:
+        return jsonify({"error": "Function not found"}), 404
+    
 
 # 루트 페이지 접근 제어
 @app.route('/root', methods=['GET'])

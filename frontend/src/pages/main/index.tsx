@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import LeftBox from '../../components/left/left';
 import MiddleBox from '../../components/middle/middle';
-import RightBox from '../../components/right/right';
+import Chatbot from '../../components/right/right';
 import LanguageSelector from '../../components/LanguageSelector/LanguageSelector';
 import './Main.css';
 
@@ -15,10 +15,7 @@ const Main: React.FC = () => {
   const [languages, setLanguages] = useState<string[]>([]);
   const [selectedLanguage, setSelectedLanguage] = useState<string>('Python');
   const [selectedTerm, setSelectedTerm] = useState<Term | null>(null);
-
-  const fixedLeftWidth = 200; // LeftBox 고정 너비 (px)
-  const [middleWidth, setMiddleWidth] = useState(60); // MiddleBox 초기 너비 (%)
-  const [rightWidth, setRightWidth] = useState(40); // RightBox 초기 너비 (%)
+  const [explanationRequest, setExplanationRequest] = useState<Term | null>(null); // 설명 요청 상태
 
   useEffect(() => {
     const fetchLanguages = async () => {
@@ -38,44 +35,27 @@ const Main: React.FC = () => {
     setSelectedTerm(term);
   };
 
-  // MiddleBox와 RightBox 사이만 드래그 가능하게 설정
-  const handleMouseDown = () => {
-    const handleMouseMove = (event: MouseEvent) => {
-      const newMiddleWidth = ((event.clientX - fixedLeftWidth) / (window.innerWidth - fixedLeftWidth)) * 100;
-      const newRightWidth = 100 - newMiddleWidth;
-
-      if (newMiddleWidth > 30 && newRightWidth > 10) {
-        setMiddleWidth(newMiddleWidth);
-        setRightWidth(newRightWidth);
-      }
-    };
-
-    const handleMouseUp = () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
+  const handleRequestExplanation = () => {
+    if (selectedTerm) {
+      setExplanationRequest(selectedTerm); // 설명 요청 상태에 현재 선택된 용어 정보를 설정
+    }
   };
 
   return (
     <div className="main-container">
       <div className="left-wrapper">
         <LanguageSelector languages={languages} onSelectLanguage={setSelectedLanguage} />
-        <div className="left-container" style={{ width: `${fixedLeftWidth}px` }}>
+        <div className="left-container">
           <LeftBox selectedLanguage={selectedLanguage} onTermClick={handleTermClick} />
         </div>
       </div>
 
       <div className="content">
-        <div className="middle-container" style={{ width: `${middleWidth}%` }}>
-          <MiddleBox term={selectedTerm} />
+        <div className="middle-container">
+          <MiddleBox term={selectedTerm} onRequestExplanation={handleRequestExplanation} />
         </div>
-        <div className="divider" onMouseDown={handleMouseDown} />
-
-        <div className="right-container" style={{ width: `${rightWidth}%` }}>
-          <RightBox />
+        <div className="right-container">
+          <Chatbot explanationRequest={explanationRequest} />
         </div>
       </div>
     </div>
