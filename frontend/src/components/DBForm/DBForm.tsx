@@ -25,6 +25,8 @@ const DBForm: React.FC<DBFormProps> = ({ onAdd, onUpdate, editConcept, setEditCo
     description: '',
   });
 
+  const [error, setError] = useState<string | null>(null);
+
   // editConcept이 변경될 때마다 폼 데이터를 설정
   useEffect(() => {
     if (editConcept) {
@@ -37,9 +39,15 @@ const DBForm: React.FC<DBFormProps> = ({ onAdd, onUpdate, editConcept, setEditCo
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setConceptData({ ...conceptData, [name]: value });
+    setError(null); // 입력 중 오류 메세지 초기화
   };
 
   const handleSubmit = () => {
+    if (!conceptData.language || !conceptData.function_name || !conceptData.usage_example || !conceptData.description) {
+      setError('모든 필드를 입력해주세요.');
+      return;
+    }
+
     if (conceptData.id) {
       // 수정 모드
       onUpdate(conceptData);
@@ -53,12 +61,13 @@ const DBForm: React.FC<DBFormProps> = ({ onAdd, onUpdate, editConcept, setEditCo
   const resetForm = () => {
     setConceptData({ language: '', function_name: '', usage_example: '', description: '' });
     setEditConcept(null); // 수정 모드 해제
+    setError(null);
   };
 
   return (
     <div className="db-form">
       <select name="language" onChange={handleChange} value={conceptData.language} className="form-select">
-        <option value="">Select Language</option>
+        <option value="">언어 선택</option>
         {languages.map((lang) => (
           <option key={lang} value={lang}>
             {lang}
@@ -83,10 +92,18 @@ const DBForm: React.FC<DBFormProps> = ({ onAdd, onUpdate, editConcept, setEditCo
         onChange={handleChange} 
         value={conceptData.description} 
       />
-      <button onClick={handleSubmit}>
-        {conceptData.id ? 'Update Concept' : 'Add Concept'}
-      </button>
-      {conceptData.id && <button onClick={resetForm} className="cancel-btn">Cancel</button>}
+      {error && <p className="error-message">{error}</p>} {/* 오류 메시지 표시 */}
+      
+      <div className="button-group">
+        <button onClick={handleSubmit} className="submit-btn">
+          {conceptData.id ? 'Update Concept' : 'Add Concept'}
+        </button>
+        {conceptData.id && (
+          <button onClick={resetForm} className="cancel-btn">
+            Cancel
+          </button>
+        )}
+      </div>
     </div>
   );
 };

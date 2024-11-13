@@ -13,6 +13,11 @@ from openai.error import OpenAIError, RateLimitError
 # .env 파일 로드 및 환경 변수 가져오기
 load_dotenv()
 
+# Flask 앱 초기화 및 설정
+app = Flask(__name__)
+app.secret_key = os.urandom(24)
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
+
 
 # 환경 변수 가져오기
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
@@ -23,14 +28,30 @@ if not (GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET and OPENAI_API_KEY):
     raise ValueError("환경 변수가 올바르게 설정되지 않았습니다.")
 
 
-# Flask 앱 초기화 및 설정
-app = Flask(__name__)
-app.secret_key = os.urandom(24)
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
-
-
 # OpenAI API 키 설정
 openai.api_key = OPENAI_API_KEY
+
+
+# 환경 변수에서 RDS 접속 정보 가져오기
+RDS_HOST = os.getenv('RDS_HOST')
+RDS_PORT = int(os.getenv('RDS_PORT', 3306))
+RDS_USER = os.getenv('RDS_USER')
+RDS_PASSWORD = os.getenv('RDS_PASSWORD')
+RDS_DB = os.getenv('RDS_DB')
+
+
+# DB 연결 함수
+def get_db_connection():
+    """RDS 데이터베이스에 연결"""
+    return pymysql.connect(
+        host=RDS_HOST,
+        port=RDS_PORT,
+        user=RDS_USER,
+        password=RDS_PASSWORD,
+        db=RDS_DB,
+        charset='utf8',
+        cursorclass=pymysql.cursors.DictCursor
+    )
 
 
 # Google OAuth 설정
@@ -46,12 +67,7 @@ google = oauth.register(
 )
 
 
-# DB 연결 함수
-def get_db_connection():
-    return pymysql.connect(
-        host='127.0.0.1', user='root', password='1234', 
-        db='co_wiki', charset='utf8', cursorclass=pymysql.cursors.DictCursor
-    )
+
 
 
 # 관리자 여부 확인 함수
@@ -172,29 +188,38 @@ def get_functions():
 def add_function():
     data = request.json
 
-    # 데이터 검증
+    # 데이터 필드 검증
     required_fields = ['language', 'function_name', 'usage_example', 'description']
-    for field in required_fields:
-        if field not in data or not data[field]:
-            return jsonify({"error": f"{field} is required"}), 400
+    missing_fields = [field for field in required_fields if field not in data or not data[field]]
+    if missing_fields:
+        return jsonify({"error": f"{', '.join(missing_fields)} 필드가 필요합니다."}), 400
 
+    # 데이터베이스 연결
     db = get_db_connection()
     cursor = db.cursor()
     try:
+        # 새로운 함수 데이터 추가
         cursor.execute(
             "INSERT INTO programming_concepts (language, function_name, usage_example, description) VALUES (%s, %s, %s, %s)",
             (data['language'], data['function_name'], data['usage_example'], data['description'])
         )
         db.commit()
         new_id = cursor.lastrowid
-        return jsonify({"message": "Function added successfully!", "id": new_id})
+        return jsonify({"message": "Function added successfully!", "id": new_id}), 201
+
+    except pymysql.MySQLError as e:
+        # 오류 발생 시 롤백 및 오류 메시지 반환
+        db.rollback()
+        return jsonify({"error": f"데이터베이스 오류: {e}"}), 500
+
     except Exception as e:
         db.rollback()
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": f"서버 오류: {e}"}), 500
+
     finally:
+        # 리소스 정리
         cursor.close()
         db.close()
-
 
 # 함수 삭제 (관리자 전용)
 @app.route('/api/functions/<int:id>', methods=['DELETE'])
