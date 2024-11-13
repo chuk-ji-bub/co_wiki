@@ -1,35 +1,54 @@
 .db-form {
-  width: 100%;
-  max-width: 500px;
-  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 400px;
   padding: 20px;
+  background-color: #f9f9f9;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
 }
 
-.form-select,
-.db-form input,
-.db-form textarea {
+.form-select, input, textarea {
   width: 100%;
-  padding: 10px;
-  margin: 10px 0;
+  padding: 8px;
+  margin-top: 4px;
   border: 1px solid #ddd;
-  border-radius: 5px;
+  border-radius: 4px;
   font-size: 14px;
 }
 
-.db-form button {
-  width: 100%;
+button.submit-btn {
+  background-color: #007acc;
+  color: white;
   padding: 10px;
-  font-size: 16px;
   border: none;
   border-radius: 5px;
-  background-color: #28a745;
-  color: white;
   cursor: pointer;
 }
 
-.db-form button:hover {
-  background-color: #218838;
+button.submit-btn:hover {
+  background-color: #005f9e;
+}
+
+button.cancel-btn {
+  background-color: #e0e0e0;
+  color: black;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button.cancel-btn:hover {
+  background-color: #c0c0c0;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
 }

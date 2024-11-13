@@ -50,14 +50,14 @@ const UserPage: React.FC = () => {
       )}
 
       {/* 챗봇 대화 기록 */}
-      <div className="chat-records">
+      {/* <div className="chat-records">
         <h2>챗봇 대화 기록</h2>
         {chatRecords.map((record, index) => (
           <div key={index} className="chat-record">
             <strong>{record.sender}</strong>: {record.message} <em>{record.timestamp}</em>
           </div>
         ))}
-      </div>
+      </div> */}
 
       {/* 새로운 콘텐츠 영역 */}
       <div className="new-section">

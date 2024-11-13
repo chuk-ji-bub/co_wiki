@@ -25,7 +25,7 @@ const MiddleBox: React.FC<MiddleProps> = ({ term, onRequestExplanation }) => {
           </button>
         </div>
       ) : (
-        <p>함수에 대한 정보를 보려면 "자세히 보기" 버튼을 클릭하세요.</p>
+        <p>함수에 대한 정보를 보려면 "설명 듣기" 버튼을 클릭하세요.</p>
       )}
     </div>
   );
