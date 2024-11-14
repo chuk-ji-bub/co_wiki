@@ -6,7 +6,7 @@
 
 .left-wrapper {
   display: flex;
-  width: 260px; /* Adjusted to fit LanguageSelector and LeftBox */
+  width: 260px;
 }
 
 .language-selector {
@@ -28,7 +28,6 @@
 }
 
 .middle-container {
-  width: 90%;
   background-color: #1e1e1e;
   padding: 20px;
 }
@@ -40,7 +39,6 @@
 }
 
 .right-container {
-  width: 40%;
   background-color: #2d2d2d;
   padding: 20px;
 }
