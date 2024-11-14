@@ -3,6 +3,7 @@ import LeftBox from '../../components/left/left';
 import MiddleBox from '../../components/middle/middle';
 import Chatbot from '../../components/right/right';
 import LanguageSelector from '../../components/LanguageSelector/LanguageSelector';
+
 import './Main.css';
 
 interface Term {
@@ -15,19 +16,21 @@ const Main: React.FC = () => {
   const [languages, setLanguages] = useState<string[]>([]);
   const [selectedLanguage, setSelectedLanguage] = useState<string>('Python');
   const [selectedTerm, setSelectedTerm] = useState<Term | null>(null);
-  const [explanationRequest, setExplanationRequest] = useState<Term | null>(null); // 설명 요청 상태
+  const [explanationRequest, setExplanationRequest] = useState<Term | null>(null);
+
+  const [middleWidth, setMiddleWidth] = useState(60); // MiddleBox 초기 너비 (%)
+  const [rightWidth, setRightWidth] = useState(40); // RightBox 초기 너비 (%)
 
   useEffect(() => {
     const fetchLanguages = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/languages');
+        const response = await fetch(`http://localhost:5000/api/languages`);
         const data = await response.json();
         setLanguages(data);
       } catch (error) {
         console.error('Error fetching languages:', error);
       }
     };
-
     fetchLanguages();
   }, []);
 
@@ -37,8 +40,33 @@ const Main: React.FC = () => {
 
   const handleRequestExplanation = () => {
     if (selectedTerm) {
-      setExplanationRequest(selectedTerm); // 설명 요청 상태에 현재 선택된 용어 정보를 설정
+      setExplanationRequest(selectedTerm);
     }
+  };
+
+  // Divider drag-and-resize handler
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const startX = e.clientX;
+
+    const handleMouseMove = (event: MouseEvent) => {
+      const deltaX = event.clientX - startX;
+      const newMiddleWidth = ((middleWidth * window.innerWidth) / 100 + deltaX) * 100 / window.innerWidth;
+      const newRightWidth = 100 - newMiddleWidth;
+
+      if (newMiddleWidth > 30 && newRightWidth > 10) {
+        setMiddleWidth(newMiddleWidth);
+        setRightWidth(newRightWidth);
+      }
+    };
+
+    const handleMouseUp = () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
   };
 
   return (
@@ -51,10 +79,11 @@ const Main: React.FC = () => {
       </div>
 
       <div className="content">
-        <div className="middle-container">
+        <div className="middle-container" style={{ width: `${middleWidth}%` }}>
           <MiddleBox term={selectedTerm} onRequestExplanation={handleRequestExplanation} />
         </div>
-        <div className="right-container">
+        <div className="divider" onMouseDown={handleMouseDown} />
+        <div className="right-container" style={{ width: `${rightWidth}%` }}>
           <Chatbot explanationRequest={explanationRequest} />
         </div>
       </div>
